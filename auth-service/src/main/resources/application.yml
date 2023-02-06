@@ -1,0 +1,88 @@
+#CONFIG PORT
+server:
+  port: 9090
+  max-http-header-size: 1000000
+
+# SPRING CONFIG
+spring:
+#  main:
+#    web-application-type: none
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/admin
+    redis:
+      database: 0
+      host: 127.0.0.1
+      port: 6379
+      password: admin123
+  #  DATASOURCE MARIADB
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/mar-platform?createDatabaseIfNotExist=false&autoReconnect=true&UseUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: false
+  devtools:
+    add-properties: false
+  # REDIS
+  boot:
+    admin:
+      client:
+        url: http://admin-server:9090
+        username: admin
+        password: admin
+      notify:
+        mail:
+          to:
+
+management:
+  endpoint:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: always
+
+
+##Eureka client config
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://eureka-server:8761/eureka/
+#    fetchRegistry: true
+#    instance:
+#      preferIpAddress: false
+
+# API Endpoint get campaign permission of user
+#application:
+#  mar:
+#    url-service:
+#      campaign-permission-user: http://url-service:9090/url/campaign/permissions/{id}
+
+# JWT config
+auth:
+  default-pass: 1qazXSW@2020
+  secret-key: Z#Rh]@t/ZZm8/&ws
+  code:
+    prefix: 'auth:jwt:'
+    expire-time: 1800 #30m
+  token:
+    access-token-validity: 172800 #48h
+    refresh-token-validity: 7776000 #90d
+    access-token-length: 64
+    refresh-token-length: 128
+  crypto:
+    public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDdADbaytSINXTiffTsb8dpYznJ6HhzDVUwAgraNMMaDGFlvmCCy9sq6TZG08PKzn6HEOb5xlCcQfCZBbtEzRmdyqQmhHN8rA1+m/v+/UrCtfSUPwH3wXHN3MJn0JYDEv5V6NUwCG6aqXgZWgU0AXLKdIhR8MofJbyyf42DsTNiewIDAQAB
+    private-key: MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAN0ANtrK1Ig1dOJ99Oxvx2ljOcnoeHMNVTACCto0wxoMYWW+YILL2yrpNkbTw8rOfocQ5vnGUJxB8JkFu0TNGZ3KpCaEc3ysDX6b+/79SsK19JQ/AffBcc3cwmfQlgMS/lXo1TAIbpqpeBlaBTQBcsp0iFHwyh8lvLJ/jYOxM2J7AgMBAAECgYEA2fZoI4l/64atbORFNxtXVP1j9Vqt0OsJZXveMC9xbLNhK/ODQ/zCf6PawCgDJnZaG+PzqcyJnFL8dC9O7yBJbZy9ruiKCEur5F5va+/Tv4OGPFWFGa5vmiTIy55L8du3FcDjc/d71g7MEZQGvUtYqwA0IwlFKbJHcUGjhmy+I+ECQQD5s0cS3uTeE2VAJ8QY7Ao6UGUBZRAKfAkDHFDJUXpgVSNAi3j4UXbwwi93hUNpfujNPb574ELNILwgWb8a5V4tAkEA4pOTzW6RSVusWkb789l0odSx7U0gCW5scnhqDAm92d4XI5HsD38qzv4fXm9U4nPVImhEmkkMBMQPz435qJ3URwJAdvgk/+e1Ed4Z2rRXqSwlP114km6NcwFf5dyC3Th13xoRXrpVG7LswY8zwHV9BfGSh99IN4tFKKjVGXDJLc5kzQJBAI3f1OQFAQqLUb/xxOBrYOHYulUaPx5Iu7Vt+xFwpCWhMKIARG1rtpWIgIH0epWV7HawDY0CgnkVf8T6ZMMVmQ8CQQCeac2rI1M8sJzj2uIAyRpiDGTdJVEPXN1wUqBrrjROaIpwzXCFn0EFzzt8dLvi3NS6CCGJfwV5zIfJjnqcGZbh
+request-log:
+  template:
+    config-file-name: template_log.json
+  export:
+    dir: export
+
