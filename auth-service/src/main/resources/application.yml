@@ -5,16 +5,11 @@ server:
 
 # SPRING CONFIG
 spring:
-#  main:
-#    web-application-type: none
+  #  main:
+  #    web-application-type: none
   data:
     mongodb:
       uri: mongodb://root:root@localhost:27017/admin
-    redis:
-      database: 0
-      host: 127.0.0.1
-      port: 6379
-      password: admin123
   #  DATASOURCE MARIADB
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
@@ -30,7 +25,7 @@ spring:
     show-sql: false
   devtools:
     add-properties: false
-  # REDIS
+
   boot:
     admin:
       client:

@@ -406,8 +406,6 @@ public class UserServiceImpl implements UserService {
     return listRole.stream().map(roleMapper::toRoleCustomerDto).collect(Collectors.toList());
   }
 
-
-
 //  @Override
 //  public List<GroupUserCustomResponseDto> getAllGroupAssignedUser() {
 //    List<GroupUser> listGroupUser = groupUserRepository.findAllByIsDeletedFalse();
@@ -426,7 +424,7 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public DataPagingResponse<UserDto> getAll(Integer page, Integer limit, String status,
-                                            String roles, String groups, String search, String sort) {
+      String roles, String groups, String search, String sort) {
     Map<String, String> map = SortingUtils.detectSortType(sort);
     List<String> statusList = new ArrayList<>();
     if (status != null && !status.isEmpty()) {

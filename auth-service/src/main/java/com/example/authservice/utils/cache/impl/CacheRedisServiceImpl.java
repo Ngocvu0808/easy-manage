@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class CacheRedisServiceImpl implements CacheRedisService {
+
   private final RedisTemplate<String, Object> template;
 
   @Autowired
@@ -61,7 +62,7 @@ public class CacheRedisServiceImpl implements CacheRedisService {
       this.template.delete(keys);
       Iterator var6 = keys.iterator();
 
-      while(var6.hasNext()) {
+      while (var6.hasNext()) {
         Object key = var6.next();
         this.template.expire((String) key, duration, timeUnit);
       }

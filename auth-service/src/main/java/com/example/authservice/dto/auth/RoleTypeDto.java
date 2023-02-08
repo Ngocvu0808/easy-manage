@@ -3,7 +3,7 @@ package com.example.authservice.dto.auth;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 22/04/2021
  */
 public class RoleTypeDto {

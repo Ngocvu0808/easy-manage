@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 17/09/2020
  */
 @Table(name = "auth_client_api_key")

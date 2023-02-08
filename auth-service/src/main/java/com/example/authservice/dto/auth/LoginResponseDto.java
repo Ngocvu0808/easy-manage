@@ -15,22 +15,23 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_NULL)
 public class LoginResponseDto {
-    private String token;
-    private String jwt;
 
-    public String getToken() {
-        return token;
-    }
+  private String token;
+  private String jwt;
 
-    public void setToken(String token) {
-        this.token = token;
-    }
+  public String getToken() {
+    return token;
+  }
 
-    public String getJwt() {
-        return jwt;
-    }
+  public void setToken(String token) {
+    this.token = token;
+  }
 
-    public void setJwt(String jwt) {
-        this.jwt = jwt;
-    }
+  public String getJwt() {
+    return jwt;
+  }
+
+  public void setJwt(String jwt) {
+    this.jwt = jwt;
+  }
 }

@@ -3,7 +3,7 @@ package com.example.authservice.dto.appservice;
 import com.example.authservice.entities.enums.ApiStatus;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/08/2020
  */
 public class ApiClientServiceDto {

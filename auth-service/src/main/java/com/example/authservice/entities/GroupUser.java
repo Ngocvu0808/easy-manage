@@ -15,6 +15,7 @@ import java.io.Serializable;
     name = "base_group_user"
 )
 public class GroupUser extends BaseEntity<Integer> implements Serializable {
+
   private static final long serialVersionUID = -4019458272016483273L;
   @Id
   @GeneratedValue(
@@ -97,11 +98,12 @@ public class GroupUser extends BaseEntity<Integer> implements Serializable {
     } else if (!(o instanceof GroupUser)) {
       return false;
     } else {
-      GroupUser other = (GroupUser)o;
+      GroupUser other = (GroupUser) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
-        label71: {
+        label71:
+        {
           Object this$id = this.getId();
           Object other$id = other.getId();
           if (this$id == null) {
@@ -125,7 +127,8 @@ public class GroupUser extends BaseEntity<Integer> implements Serializable {
           return false;
         }
 
-        label57: {
+        label57:
+        {
           Object this$userId = this.getUserId();
           Object other$userId = other.getUserId();
           if (this$userId == null) {
@@ -185,6 +188,7 @@ public class GroupUser extends BaseEntity<Integer> implements Serializable {
   }
 
   public String toString() {
-    return "GroupUser(id=" + this.getId() + ", groupId=" + this.getGroupId() + ", userId=" + this.getUserId() + ", group=" + this.getGroup() + ", user=" + this.getUser() + ")";
+    return "GroupUser(id=" + this.getId() + ", groupId=" + this.getGroupId() + ", userId="
+        + this.getUserId() + ", group=" + this.getGroup() + ", user=" + this.getUser() + ")";
   }
 }

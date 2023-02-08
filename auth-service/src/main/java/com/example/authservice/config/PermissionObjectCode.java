@@ -1,10 +1,10 @@
 package com.example.authservice.config;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 13/08/2020
  */
-public interface                                                                                                                                                                                                                                                                                                                                                  PermissionObjectCode {
+public interface PermissionObjectCode {
 
   String USER = "USER";
   String GROUP = "GROUP";

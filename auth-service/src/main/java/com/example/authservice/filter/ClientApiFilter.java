@@ -12,7 +12,8 @@ import java.util.List;
 
 public class ClientApiFilter extends EntityFilter<ClientApi> {
 
-  public Specification<ClientApi> filterByClientIdAndServiceId(Integer clientId, Integer serviceId) {
+  public Specification<ClientApi> filterByClientIdAndServiceId(Integer clientId,
+      Integer serviceId) {
     return (root, criteriaQuery, criteriaBuilder) -> {
       Join<Object, Object> api = root.join("api", JoinType.LEFT);
       Join<Object, Object> service = api.join("service", JoinType.LEFT);

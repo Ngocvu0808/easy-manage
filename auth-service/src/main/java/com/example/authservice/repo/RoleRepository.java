@@ -8,20 +8,22 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 import java.util.Optional;
 
-public interface RoleRepository extends JpaRepository<Role, Integer>, JpaSpecificationExecutor<Role> {
-    List<Role> findAllByCodeIn(List<String> roles);
+public interface RoleRepository extends JpaRepository<Role, Integer>,
+    JpaSpecificationExecutor<Role> {
 
-    List<Role> findAllByIdIn(List<Integer> ids);
+  List<Role> findAllByCodeIn(List<String> roles);
 
-    Optional<Role> findByCodeAndIsDeletedFalse(String code);
+  List<Role> findAllByIdIn(List<Integer> ids);
 
-    Optional<Role> findByIdAndIsDeletedFalse(Integer id);
+  Optional<Role> findByCodeAndIsDeletedFalse(String code);
 
-    List<Role> findAllByIsDeletedFalse();
+  Optional<Role> findByIdAndIsDeletedFalse(Integer id);
 
-    List<Role> findAllByIsDeletedFalseAndDefaultRoleTrue();
+  List<Role> findAllByIsDeletedFalse();
 
-    List<Role> findAllByIsDeletedFalseAndIdIn(List<Integer> ids);
+  List<Role> findAllByIsDeletedFalseAndDefaultRoleTrue();
 
-    List<Role> findAllByIsDeletedFalseAndType(RoleType roleType);
+  List<Role> findAllByIsDeletedFalseAndIdIn(List<Integer> ids);
+
+  List<Role> findAllByIsDeletedFalseAndType(RoleType roleType);
 }

@@ -5,7 +5,7 @@ import com.example.authservice.entities.enums.ClientStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 02/06/2020
  */
 public class ClientDetailDto {

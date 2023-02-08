@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/08/2020
  */
 public interface ClientServiceRepository extends JpaRepository<ClientService, Integer> {

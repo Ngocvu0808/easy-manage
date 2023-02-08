@@ -5,6 +5,7 @@ package com.example.authservice.dto.role;
  * @create_date 02/09/2022
  */
 public class RoleCustomDto {
+
   private String name;
   private Integer id;
 

@@ -6,7 +6,8 @@ import java.util.List;
  * @author nguyen
  * @create_date 02/09/2022
  */
-public class IdListDto <T> {
+public class IdListDto<T> {
+
   private List<T> ids;
 
   public List<T> getIds() {
@@ -23,7 +24,7 @@ public class IdListDto <T> {
     } else if (!(o instanceof IdListDto)) {
       return false;
     } else {
-      IdListDto<?> other = (IdListDto)o;
+      IdListDto<?> other = (IdListDto) o;
       if (!other.canEqual(this)) {
         return false;
       } else {

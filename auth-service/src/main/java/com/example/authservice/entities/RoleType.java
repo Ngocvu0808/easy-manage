@@ -14,6 +14,7 @@ import java.util.Date;
     name = "base_role_type"
 )
 public class RoleType {
+
   @Id
   @GeneratedValue(
       strategy = GenerationType.IDENTITY
@@ -107,11 +108,12 @@ public class RoleType {
     } else if (!(o instanceof RoleType)) {
       return false;
     } else {
-      RoleType other = (RoleType)o;
+      RoleType other = (RoleType) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
-        label95: {
+        label95:
+        {
           Object this$id = this.getId();
           Object other$id = other.getId();
           if (this$id == null) {
@@ -145,7 +147,8 @@ public class RoleType {
           return false;
         }
 
-        label74: {
+        label74:
+        {
           Object this$description = this.getDescription();
           Object other$description = other.getDescription();
           if (this$description == null) {
@@ -159,7 +162,8 @@ public class RoleType {
           return false;
         }
 
-        label67: {
+        label67:
+        {
           Object this$isDefault = this.getIsDefault();
           Object other$isDefault = other.getIsDefault();
           if (this$isDefault == null) {

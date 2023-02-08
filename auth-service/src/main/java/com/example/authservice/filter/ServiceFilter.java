@@ -85,7 +85,7 @@ public class ServiceFilter extends EntityFilter<Service> {
 
 
   public Specification<Service> getServiceFilter(String search, Set<Integer> listSystemId,
-      Set<Integer> serviceIds, Map<String, String> sort,ServiceStatus status, Boolean isDeleted) {
+      Set<Integer> serviceIds, Map<String, String> sort, ServiceStatus status, Boolean isDeleted) {
     return (root, criteriaQuery, criteriaBuilder) -> {
 
       List<Predicate> predicates = new ArrayList<>();

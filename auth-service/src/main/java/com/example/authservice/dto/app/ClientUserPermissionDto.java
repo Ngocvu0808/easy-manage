@@ -1,7 +1,7 @@
 package com.example.authservice.dto.app;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 01/08/2020
  */
 public class ClientUserPermissionDto {

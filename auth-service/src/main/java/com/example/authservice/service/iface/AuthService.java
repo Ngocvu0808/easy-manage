@@ -49,7 +49,7 @@ public interface AuthService {
       throws IdentifyBlankException, OperationNotImplementException, DuplicateEntityException, ResourceNotFoundException;
 
   DataPagingResponse<ClientResponseDto> getAllClient(Integer userId, Integer page, Integer limit,
-                                                     String search, ClientStatus status, String sort, Boolean isGetAll);
+      String search, ClientStatus status, String sort, Boolean isGetAll);
 
   ClientDetailDto getClientById(Integer id) throws ResourceNotFoundException;
 
@@ -97,5 +97,6 @@ public interface AuthService {
 
   void temporaryClose(HttpServletRequest request) throws ResourceNotFoundException;
 
-  void saveUserActivity(UserActivityRequestDto dto, HttpServletRequest request) throws UnknownHostException;
+  void saveUserActivity(UserActivityRequestDto dto, HttpServletRequest request)
+      throws UnknownHostException;
 }

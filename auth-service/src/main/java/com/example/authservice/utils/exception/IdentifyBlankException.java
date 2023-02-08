@@ -4,7 +4,8 @@ package com.example.authservice.utils.exception;
  * @author nguyen
  * @create_date 02/09/2022
  */
-public class IdentifyBlankException extends BaseException{
+public class IdentifyBlankException extends BaseException {
+
   public IdentifyBlankException(String message) {
     super(message);
   }

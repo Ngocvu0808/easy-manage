@@ -9,7 +9,7 @@ import org.mapstruct.NullValueCheckStrategy;
 import org.springframework.stereotype.Component;
 
 /**
- * @author bontk
+ * @author nguyen
  * @date 26/02/2020
  */
 

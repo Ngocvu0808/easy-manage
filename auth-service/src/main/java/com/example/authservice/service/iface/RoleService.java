@@ -17,21 +17,22 @@ public interface RoleService {
   List<String> findAllCodePermission(List<String> roles);
 
   RoleResponseDto addRole(Integer creatorId, RoleDtoRequest dto)
-          throws ResourceNotFoundException, DuplicateEntityException, IdentifyBlankException;
+      throws ResourceNotFoundException, DuplicateEntityException, IdentifyBlankException;
 
   RoleResponseDto getRole(Integer roleId) throws ResourceNotFoundException;
 
   RoleResponseDto updateRole(Integer updaterId, Integer roleId, RoleDtoRequest dto)
-          throws ResourceNotFoundException, OperationNotImplementException, IdentifyBlankException;
+      throws ResourceNotFoundException, OperationNotImplementException, IdentifyBlankException;
 
   void deleteRole(Integer deleterId, Integer roleId)
-          throws ResourceNotFoundException, OperationNotImplementException;
+      throws ResourceNotFoundException, OperationNotImplementException;
 
   List<RolePermissionDto> findAllSysPermission();
 
   List<RoleDto> findAllRole();
 
-  DataPagingResponse<RoleDtoExtended> getAllRole(Integer page, Integer limit, String search, String sort,Boolean isSystemRole);
+  DataPagingResponse<RoleDtoExtended> getAllRole(Integer page, Integer limit, String search,
+      String sort, Boolean isSystemRole);
 
   List<RoleCustomDto> getRoleByType(String type);
 

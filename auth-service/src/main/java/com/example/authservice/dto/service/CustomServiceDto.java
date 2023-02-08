@@ -3,7 +3,7 @@ package com.example.authservice.dto.service;
 import com.example.authservice.entities.enums.ServiceStatus;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 04/08/2020
  */
 public class CustomServiceDto {

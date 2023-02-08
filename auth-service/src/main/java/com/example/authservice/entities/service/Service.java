@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 31/07/2020
  */
 @EqualsAndHashCode(callSuper = true)

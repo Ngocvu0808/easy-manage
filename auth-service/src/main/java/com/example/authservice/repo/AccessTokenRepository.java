@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/06/2020
  */
 public interface AccessTokenRepository extends JpaRepository<AccessToken, Long> {

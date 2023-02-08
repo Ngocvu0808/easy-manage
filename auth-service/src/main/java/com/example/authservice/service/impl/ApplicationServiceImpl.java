@@ -89,27 +89,28 @@ public class ApplicationServiceImpl implements ApplicationService {
   private String configTemplateRequestLogFileName;
 
   public ApplicationServiceImpl(ClientRepository clientRepository,
-                                ApiKeyRepository apiKeyRepository,
-                                UserRepository userRepository,
-                                ClientUserRepository clientUserRepository,
-                                ClientUserPermissionRepository clientUserPermissionRepository,
-                                RoleRepository roleRepository,
-                                RoleDetailRepositoryExtended roleDetailRepository,
-                                AccessTokenRepository accessTokenRepository,
-                                ClientServiceRepository clientServiceRepository,
-                                ServiceRepository serviceRepository,
-                                ExternalApiRepository externalApiRepository,
-                                ClientApiRepository clientApiRepository,
-                                ApiRequestRepository apiRequestRepository,
-                                RoleObjectRepository roleObjectRepository,
-                                ClientApiKeyRepository clientApiKeyRepository,
-                                ClientApiKeyMapper clientApiKeyMapper,
-                                UserClientMapper userClientMapper,
-                                RefreshTokenMapper refreshTokenMapper,
-                                AccessTokenMapper accessTokenMapper,
-                                ServiceMapper serviceMapper,
-                                ExternalApiMapper externalApiMapper,
-                                RoleMapper roleMapper, CacheRedisService redisService, ClientApiKeyFilter clientApiKeyFilter) {
+      ApiKeyRepository apiKeyRepository,
+      UserRepository userRepository,
+      ClientUserRepository clientUserRepository,
+      ClientUserPermissionRepository clientUserPermissionRepository,
+      RoleRepository roleRepository,
+      RoleDetailRepositoryExtended roleDetailRepository,
+      AccessTokenRepository accessTokenRepository,
+      ClientServiceRepository clientServiceRepository,
+      ServiceRepository serviceRepository,
+      ExternalApiRepository externalApiRepository,
+      ClientApiRepository clientApiRepository,
+      ApiRequestRepository apiRequestRepository,
+      RoleObjectRepository roleObjectRepository,
+      ClientApiKeyRepository clientApiKeyRepository,
+      ClientApiKeyMapper clientApiKeyMapper,
+      UserClientMapper userClientMapper,
+      RefreshTokenMapper refreshTokenMapper,
+      AccessTokenMapper accessTokenMapper,
+      ServiceMapper serviceMapper,
+      ExternalApiMapper externalApiMapper,
+      RoleMapper roleMapper, CacheRedisService redisService,
+      ClientApiKeyFilter clientApiKeyFilter) {
     this.clientRepository = clientRepository;
     this.apiKeyRepository = apiKeyRepository;
     this.userRepository = userRepository;
@@ -147,7 +148,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
   @Override
   public List<RefreshTokenResponseDto> getRefreshTokensByClientId(RefreshTokenStatus status,
-                                                                  Integer id)
+      Integer id)
       throws IdentifyBlankException, ResourceNotFoundException, OperationNotImplementException {
     if (id == null) {
       throw new IdentifyBlankException("App id null",
@@ -352,7 +353,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
   @Override
   public List<UserClientCustomDto> getUsers(Integer clientId, String roles, String search,
-                                            String sort) throws ResourceNotFoundException {
+      String sort) throws ResourceNotFoundException {
     Optional<Client> clientOptional = clientRepository.findById(clientId);
     if (clientOptional.isEmpty() || clientOptional.get().getDeleted().equals(Boolean.TRUE)) {
       throw new ResourceNotFoundException("client invalid",

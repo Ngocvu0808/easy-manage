@@ -8,7 +8,7 @@ import org.mapstruct.*;
 
 import java.util.Date;
 
-@Mapper(componentModel = "spring",nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+@Mapper(componentModel = "spring", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
 public abstract class RefreshTokenMapper {
 
   @Mapping(target = "createdTime", source = "createdTime", resultType = Long.class)

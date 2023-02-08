@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 17/08/2020
  */
 public interface RoleTypeRepository extends JpaRepository<RoleType, Integer> {

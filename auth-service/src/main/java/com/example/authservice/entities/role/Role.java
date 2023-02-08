@@ -15,6 +15,7 @@ import java.io.Serializable;
     name = "base_role"
 )
 public class Role extends BaseEntity<Integer> implements Serializable {
+
   private static final long serialVersionUID = -2644725583225637759L;
   @Id
   @GeneratedValue(
@@ -125,11 +126,12 @@ public class Role extends BaseEntity<Integer> implements Serializable {
     } else if (!(o instanceof Role)) {
       return false;
     } else {
-      Role other = (Role)o;
+      Role other = (Role) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
-        label107: {
+        label107:
+        {
           Object this$id = this.getId();
           Object other$id = other.getId();
           if (this$id == null) {
@@ -163,7 +165,8 @@ public class Role extends BaseEntity<Integer> implements Serializable {
           return false;
         }
 
-        label86: {
+        label86:
+        {
           Object this$note = this.getNote();
           Object other$note = other.getNote();
           if (this$note == null) {
@@ -177,7 +180,8 @@ public class Role extends BaseEntity<Integer> implements Serializable {
           return false;
         }
 
-        label79: {
+        label79:
+        {
           Object this$typeId = this.getTypeId();
           Object other$typeId = other.getTypeId();
           if (this$typeId == null) {
@@ -191,7 +195,8 @@ public class Role extends BaseEntity<Integer> implements Serializable {
           return false;
         }
 
-        label72: {
+        label72:
+        {
           Object this$type = this.getType();
           Object other$type = other.getType();
           if (this$type == null) {
@@ -257,6 +262,9 @@ public class Role extends BaseEntity<Integer> implements Serializable {
   }
 
   public String toString() {
-    return "Role(id=" + this.getId() + ", code=" + this.getCode() + ", name=" + this.getName() + ", note=" + this.getNote() + ", typeId=" + this.getTypeId() + ", type=" + this.getType() + ", defaultRole=" + this.getDefaultRole() + ", isSystemRole=" + this.getIsSystemRole() + ")";
+    return "Role(id=" + this.getId() + ", code=" + this.getCode() + ", name=" + this.getName()
+        + ", note=" + this.getNote() + ", typeId=" + this.getTypeId() + ", type=" + this.getType()
+        + ", defaultRole=" + this.getDefaultRole() + ", isSystemRole=" + this.getIsSystemRole()
+        + ")";
   }
 }

@@ -1,7 +1,7 @@
 package com.example.authservice.utils;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 04/06/2020
  */
 public final class KeyConstants {

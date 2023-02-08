@@ -7,7 +7,7 @@ import org.mapstruct.*;
 import org.springframework.stereotype.Component;
 
 /**
- * @author bontk
+ * @author nguyen
  * @date 26/02/2020
  */
 
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class UserClientMapper {
 
-  @Mapping(target = "id",source = "user.id")
-  @Mapping(target = "username",source = "user.username")
-  @Mapping(target = "name",source = "user.name")
-  @Mapping(target = "email",source = "user.email")
-  @Mapping(target = "status",source = "user.status")
+  @Mapping(target = "id", source = "user.id")
+  @Mapping(target = "username", source = "user.username")
+  @Mapping(target = "name", source = "user.name")
+  @Mapping(target = "email", source = "user.email")
+  @Mapping(target = "status", source = "user.status")
   public abstract UserClientCustomDto toDto(ClientUser clientUser);
 
   public abstract User fromDto(UserClientCustomDto dto);

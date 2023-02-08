@@ -5,6 +5,7 @@ package com.example.authservice.utils.response;
  * @create_date 02/09/2022
  */
 public class BaseMethodResponse {
+
   private Boolean status;
   private String message;
   private Integer httpCode;
@@ -55,11 +56,12 @@ public class BaseMethodResponse {
     } else if (!(o instanceof BaseMethodResponse)) {
       return false;
     } else {
-      BaseMethodResponse other = (BaseMethodResponse)o;
+      BaseMethodResponse other = (BaseMethodResponse) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
-        label59: {
+        label59:
+        {
           Object this$status = this.getStatus();
           Object other$status = other.getStatus();
           if (this$status == null) {
@@ -141,6 +143,7 @@ public class BaseMethodResponse {
   }
 
   public static class BaseMethodResponseBuilder {
+
     private Boolean status;
     private String message;
     private Integer httpCode;

@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface TagService {
 
-   List<TagResponseDto> getTags();
+  List<TagResponseDto> getTags();
 }

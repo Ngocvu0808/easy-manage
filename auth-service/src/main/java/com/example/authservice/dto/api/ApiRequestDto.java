@@ -11,7 +11,7 @@ import com.example.authservice.entities.enums.HttpMethod;
 import java.util.Date;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 05/08/2020
  */
 public class ApiRequestDto {

@@ -1,7 +1,7 @@
 package com.example.authservice.entities.enums;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 19/09/2020
  */
 public enum HttpStatusCustom {

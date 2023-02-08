@@ -8,7 +8,7 @@ import com.example.authservice.entities.role.Role;
 import org.mapstruct.*;
 
 /**
- * @author bontk
+ * @author nguyen
  * @date 05/03/2020
  */
 

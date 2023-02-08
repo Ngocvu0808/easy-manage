@@ -5,6 +5,7 @@ package com.example.authservice.utils.response;
  * @create_date 02/09/2022
  */
 public class PutMethodResponse<T> {
+
   private Boolean status;
   private String message;
   private Integer httpCode;
@@ -64,11 +65,12 @@ public class PutMethodResponse<T> {
     } else if (!(o instanceof PutMethodResponse)) {
       return false;
     } else {
-      PutMethodResponse<?> other = (PutMethodResponse)o;
+      PutMethodResponse<?> other = (PutMethodResponse) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
-        label71: {
+        label71:
+        {
           Object this$status = this.getStatus();
           Object other$status = other.getStatus();
           if (this$status == null) {
@@ -92,7 +94,8 @@ public class PutMethodResponse<T> {
           return false;
         }
 
-        label57: {
+        label57:
+        {
           Object this$httpCode = this.getHttpCode();
           Object other$httpCode = other.getHttpCode();
           if (this$httpCode == null) {
@@ -153,10 +156,12 @@ public class PutMethodResponse<T> {
 
   public String toString() {
     Boolean var10000 = this.getStatus();
-    return "PutMethodResponse(status=" + var10000 + ", message=" + this.getMessage() + ", httpCode=" + this.getHttpCode() + ", id=" + this.getId() + ", errorCode=" + this.getErrorCode() + ")";
+    return "PutMethodResponse(status=" + var10000 + ", message=" + this.getMessage() + ", httpCode="
+        + this.getHttpCode() + ", id=" + this.getId() + ", errorCode=" + this.getErrorCode() + ")";
   }
 
-  public PutMethodResponse(final Boolean status, final String message, final Integer httpCode, final T id, final String errorCode) {
+  public PutMethodResponse(final Boolean status, final String message, final Integer httpCode,
+      final T id, final String errorCode) {
     this.status = status;
     this.message = message;
     this.httpCode = httpCode;
@@ -165,6 +170,7 @@ public class PutMethodResponse<T> {
   }
 
   public static class PutMethodResponseBuilder<T> {
+
     private Boolean status;
     private String message;
     private Integer httpCode;
@@ -200,11 +206,14 @@ public class PutMethodResponse<T> {
     }
 
     public PutMethodResponse<T> build() {
-      return new PutMethodResponse(this.status, this.message, this.httpCode, this.id, this.errorCode);
+      return new PutMethodResponse(this.status, this.message, this.httpCode, this.id,
+          this.errorCode);
     }
 
     public String toString() {
-      return "PutMethodResponse.PutMethodResponseBuilder(status=" + this.status + ", message=" + this.message + ", httpCode=" + this.httpCode + ", id=" + this.id + ", errorCode=" + this.errorCode + ")";
+      return "PutMethodResponse.PutMethodResponseBuilder(status=" + this.status + ", message="
+          + this.message + ", httpCode=" + this.httpCode + ", id=" + this.id + ", errorCode="
+          + this.errorCode + ")";
     }
   }
 }

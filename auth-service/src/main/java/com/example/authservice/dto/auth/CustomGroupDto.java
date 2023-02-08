@@ -1,10 +1,11 @@
 package com.example.authservice.dto.auth;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 01/04/2020
  */
 public class CustomGroupDto {
+
   private Integer id;
 
   private String code;

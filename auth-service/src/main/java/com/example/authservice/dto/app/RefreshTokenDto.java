@@ -4,7 +4,7 @@ import com.example.authservice.entities.enums.RefreshTokenStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 09/06/2020
  */
 public class RefreshTokenDto {

@@ -27,7 +27,7 @@ public interface ServiceService {
 
   Integer createService(ServiceRequestDto serviceRequestDto, Integer userId)
       throws ResourceNotFoundException, IdentifyBlankException, OperationNotImplementException,
-          DuplicateEntityException;
+      DuplicateEntityException;
 
   List<ApiTypeDto> getListApiType();
 
@@ -36,7 +36,7 @@ public interface ServiceService {
   List<ApiStatusDto> getListApiStatus();
 
   DataPagingResponse<ServiceResponseDto> getServices(String systems, String status, String sort,
-                                                     String search, Integer page, Integer limit);
+      String search, Integer page, Integer limit);
 
   List<ApiRequestStatusDto> getListApiRequestStatus();
 
@@ -44,7 +44,7 @@ public interface ServiceService {
       throws ResourceNotFoundException, OperationNotImplementException, DuplicateEntityException;
 
   Boolean updateStatusService(ServiceRequestUpdateStatusDto serviceRequestUpdateStatusDto,
-                              Integer updateUser)
+      Integer updateUser)
       throws OperationNotImplementException, IdentifyBlankException, ResourceNotFoundException;
 
   Boolean deleteServiceById(Integer id, Integer userId)
@@ -67,7 +67,7 @@ public interface ServiceService {
       String sort, String search, Integer page, Integer limit);
 
   DataPagingResponse<ApiRequestDto> getApiRequests(String systems, String services, String clients,
-                                                   String types, String status, String sort, String search, Integer page, Integer limit);
+      String types, String status, String sort, String search, Integer page, Integer limit);
 
   ApiRequestDto getApiRequestById(Long apiId) throws ResourceNotFoundException;
 

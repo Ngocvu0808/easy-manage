@@ -5,6 +5,7 @@ package com.example.authservice.utils.response;
  * @create_date 02/09/2022
  */
 public class DeleteMethodResponse {
+
   private Boolean status;
   private String message;
   private Integer httpCode;
@@ -55,11 +56,12 @@ public class DeleteMethodResponse {
     } else if (!(o instanceof DeleteMethodResponse)) {
       return false;
     } else {
-      DeleteMethodResponse other = (DeleteMethodResponse)o;
+      DeleteMethodResponse other = (DeleteMethodResponse) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
-        label59: {
+        label59:
+        {
           Object this$status = this.getStatus();
           Object other$status = other.getStatus();
           if (this$status == null) {
@@ -128,10 +130,12 @@ public class DeleteMethodResponse {
 
   public String toString() {
     Boolean var10000 = this.getStatus();
-    return "DeleteMethodResponse(status=" + var10000 + ", message=" + this.getMessage() + ", httpCode=" + this.getHttpCode() + ", errorCode=" + this.getErrorCode() + ")";
+    return "DeleteMethodResponse(status=" + var10000 + ", message=" + this.getMessage()
+        + ", httpCode=" + this.getHttpCode() + ", errorCode=" + this.getErrorCode() + ")";
   }
 
-  public DeleteMethodResponse(final Boolean status, final String message, final Integer httpCode, final String errorCode) {
+  public DeleteMethodResponse(final Boolean status, final String message, final Integer httpCode,
+      final String errorCode) {
     this.status = status;
     this.message = message;
     this.httpCode = httpCode;
@@ -139,6 +143,7 @@ public class DeleteMethodResponse {
   }
 
   public static class DeleteMethodResponseBuilder {
+
     private Boolean status;
     private String message;
     private Integer httpCode;
@@ -172,7 +177,8 @@ public class DeleteMethodResponse {
     }
 
     public String toString() {
-      return "DeleteMethodResponse.DeleteMethodResponseBuilder(status=" + this.status + ", message=" + this.message + ", httpCode=" + this.httpCode + ", errorCode=" + this.errorCode + ")";
+      return "DeleteMethodResponse.DeleteMethodResponseBuilder(status=" + this.status + ", message="
+          + this.message + ", httpCode=" + this.httpCode + ", errorCode=" + this.errorCode + ")";
     }
   }
 }

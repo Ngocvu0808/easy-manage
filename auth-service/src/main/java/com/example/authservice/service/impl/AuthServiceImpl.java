@@ -100,22 +100,22 @@ public class AuthServiceImpl implements AuthService {
   private String APPLICATION_OWNER_ROLE;
 
   public AuthServiceImpl(CacheRedisService redisService,
-                         UserService userService,
-                         CryptoService cryptoService,
-                         PasswordEncoder passwordEncoder,
-                         UserRepository userRepository,
-                         ClientRepository clientRepository,
-                         ClientUserRepository clientUserRepository,
-                         ApiKeyRepository apiKeyRepository,
-                         AccessTokenRepository accessTokenRepository,
-                         RefreshTokenRepository refreshTokenRepository,
-                         ClientWhiteListRepository clientWhiteListRepository,
-                         RoleObjectRepository roleObjectRepository,
-                         RoleRepository roleRepository,
-                         RefreshTokenMapper refreshTokenMapper,
-                         ClientMapper clientMapper,
-                         ClientApiRepository clientApiRepository,
-                         ClientApiKeyRepository clientApiKeyRepository) {
+      UserService userService,
+      CryptoService cryptoService,
+      PasswordEncoder passwordEncoder,
+      UserRepository userRepository,
+      ClientRepository clientRepository,
+      ClientUserRepository clientUserRepository,
+      ApiKeyRepository apiKeyRepository,
+      AccessTokenRepository accessTokenRepository,
+      RefreshTokenRepository refreshTokenRepository,
+      ClientWhiteListRepository clientWhiteListRepository,
+      RoleObjectRepository roleObjectRepository,
+      RoleRepository roleRepository,
+      RefreshTokenMapper refreshTokenMapper,
+      ClientMapper clientMapper,
+      ClientApiRepository clientApiRepository,
+      ClientApiKeyRepository clientApiKeyRepository) {
     this.redisService = redisService;
     this.userService = userService;
     this.cryptoService = cryptoService;
@@ -276,7 +276,8 @@ public class AuthServiceImpl implements AuthService {
           throw new UnAuthorizedException("ip request is null or empty",
               ServiceInfo.getId() + AuthServiceMessageCode.IP_INVALID);
         }
-        String ipWhiteList = String.valueOf(redisService.hGet(key, KeyConstants.RedisKey.IP_WHITELIST));
+        String ipWhiteList = String.valueOf(
+            redisService.hGet(key, KeyConstants.RedisKey.IP_WHITELIST));
         if (ipWhiteList == null || ipWhiteList.isBlank()) {
           logger.info("ip whitelist is null or empty");
           throw new UnAuthorizedException("token invalid",
@@ -622,7 +623,7 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public DataPagingResponse<ClientResponseDto> getAllClient(Integer userId, Integer page,
-                                                            Integer limit, String search, ClientStatus status, String sort, Boolean isGetAll) {
+      Integer limit, String search, ClientStatus status, String sort, Boolean isGetAll) {
     Specification<Client> filter;
     Map<String, String> sortMap = SortingUtils.detectSortType(sort);
     if (!isGetAll) {
@@ -1338,7 +1339,8 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public GuestAccessResponseDto guestAccess(GuestAccessRequestDto request) throws NoSuchAlgorithmException {
+  public GuestAccessResponseDto guestAccess(GuestAccessRequestDto request)
+      throws NoSuchAlgorithmException {
     return null;
   }
 
@@ -1348,7 +1350,8 @@ public class AuthServiceImpl implements AuthService {
   }
 
   @Override
-  public void saveUserActivity(UserActivityRequestDto dto, HttpServletRequest request) throws UnknownHostException {
+  public void saveUserActivity(UserActivityRequestDto dto, HttpServletRequest request)
+      throws UnknownHostException {
 
   }
 

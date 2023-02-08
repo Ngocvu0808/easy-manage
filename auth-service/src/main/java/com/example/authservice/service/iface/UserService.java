@@ -20,29 +20,29 @@ import java.util.List;
 public interface UserService {
 
   UserDto createUser(RegisterRequestDto request, Integer userId)
-          throws DuplicateEntityException, IdentifyBlankException;
+      throws DuplicateEntityException, IdentifyBlankException;
 
   void deleteUser(Integer userId, Integer deleterId) throws ResourceNotFoundException;
 
   UserDto updateStatusUser(Integer userId, Integer updaterId, UserStatus status)
-          throws ResourceNotFoundException;
+      throws ResourceNotFoundException;
 
   List<RoleDto> getRolesUser(Integer userId);
 
   void addRoleUser(Integer userId, Integer creatorId, List<Integer> roleIds)
-          throws ResourceNotFoundException, DuplicateEntityException;
+      throws ResourceNotFoundException, DuplicateEntityException;
 
   void updateRoleUser(Integer userId, Integer updaterId, List<Integer> roleIds)
-          throws ResourceNotFoundException, DuplicateEntityException;
+      throws ResourceNotFoundException, DuplicateEntityException;
 
   void deleteRoleUser(Integer userId, Integer deleterId, List<Integer> roleIds)
-          throws ResourceNotFoundException, DuplicateEntityException;
+      throws ResourceNotFoundException, DuplicateEntityException;
 
   UserDto getUserById(String token, Integer userId)
-          throws ResourceNotFoundException, DuplicateEntityException, IdentifyBlankException;
+      throws ResourceNotFoundException, DuplicateEntityException, IdentifyBlankException;
 
   UserDto updateUser(UserDto userDto, Integer updaterUserId)
-          throws ResourceNotFoundException, IdentifyBlankException, DuplicateEntityException;
+      throws ResourceNotFoundException, IdentifyBlankException, DuplicateEntityException;
 
   List<GroupAndUserDto> getAllGroupAndUser(String filter);
 
@@ -51,7 +51,7 @@ public interface UserService {
 //  List<GroupUserCustomResponseDto> getAllGroupAssignedUser();
 
   DataPagingResponse<UserDto> getAll(Integer page, Integer limit, String status,
-                                     String roles, String groups, String search, String sort);
+      String roles, String groups, String search, String sort);
 
   void updateStatusListUser(UpdateStatusUserListDto dto, Integer updaterId);
 
@@ -62,12 +62,12 @@ public interface UserService {
   void deleteAll(Integer deleterId) throws ResourceNotFoundException;
 
   void updateStatusAll(Integer updaterId, UserStatus status)
-          throws ResourceNotFoundException;
+      throws ResourceNotFoundException;
 
   Permission getPermissionsOfUser(Integer userId) throws IdentifyBlankException;
 
   UserDto resetPassword(Integer userId, Integer updaterId) throws ResourceNotFoundException;
 
   UserDto changePass(Integer userId, ChangePassRequestDto dto)
-          throws ResourceNotFoundException, CryptoException, OperationNotImplementException;
+      throws ResourceNotFoundException, CryptoException, OperationNotImplementException;
 }

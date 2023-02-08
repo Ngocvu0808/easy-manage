@@ -3,7 +3,7 @@ package com.example.authservice.dto.appservice;
 import lombok.Data;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/08/2020
  */
 @Data

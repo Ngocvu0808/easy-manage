@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
  * @create_date 02/09/2022
  */
 public interface CacheRedisService {
+
   Boolean exists(String key);
 
   Boolean hasKeyPattern(String pattern);

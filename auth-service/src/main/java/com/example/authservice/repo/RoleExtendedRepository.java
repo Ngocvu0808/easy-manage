@@ -6,7 +6,7 @@ import com.example.authservice.entities.role.Role;
 import java.util.List;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 17/08/2020
  */
 public interface RoleExtendedRepository extends RoleRepository {

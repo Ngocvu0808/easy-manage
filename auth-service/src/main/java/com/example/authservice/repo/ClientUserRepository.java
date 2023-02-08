@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 01/08/2020
  */
 public interface ClientUserRepository extends JpaRepository<ClientUser, Integer>,

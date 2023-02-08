@@ -9,10 +9,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.Optional;
 
-/**
- * @author bontk
- * @created_date 04/08/2020
- */
 public interface ApiRequestRepository extends JpaRepository<ApiRequest, Long>,
     JpaSpecificationExecutor<ApiRequest> {
 

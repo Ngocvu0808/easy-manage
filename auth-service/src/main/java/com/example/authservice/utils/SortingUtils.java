@@ -8,6 +8,7 @@ import java.util.*;
  * @create_date 02/09/2022
  */
 public class SortingUtils {
+
   public SortingUtils() {
   }
 
@@ -26,7 +27,7 @@ public class SortingUtils {
           return true;
         }
 
-        key = (String)var5.next();
+        key = (String) var5.next();
         String finalKey = key;
         boolean isExists = Arrays.stream(fields).anyMatch((f) -> {
           return f.getName().equals(finalKey);
@@ -34,7 +35,8 @@ public class SortingUtils {
         if (!isExists) {
           return false;
         }
-      } while(((String)fieldSort.get(key)).equals("asc") || ((String)fieldSort.get(key)).equals("desc"));
+      } while (((String) fieldSort.get(key)).equals("asc") || ((String) fieldSort.get(key)).equals(
+          "desc"));
 
       return false;
     }
@@ -47,7 +49,7 @@ public class SortingUtils {
       String[] var3 = arr;
       int var4 = arr.length;
 
-      for(int var5 = 0; var5 < var4; ++var5) {
+      for (int var5 = 0; var5 < var4; ++var5) {
         String s = var3[var5];
         String[] order = s.trim().split("_");
         map.put(order[0].trim(), order[1].trim());

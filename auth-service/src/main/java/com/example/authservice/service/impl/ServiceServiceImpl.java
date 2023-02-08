@@ -211,7 +211,7 @@ public class ServiceServiceImpl implements ServiceService {
 
   @Override
   public Boolean updateStatusService(ServiceRequestUpdateStatusDto serviceRequestUpdateStatusDto,
-                                     Integer updateUser)
+      Integer updateUser)
       throws OperationNotImplementException, IdentifyBlankException, ResourceNotFoundException {
     if (serviceRequestUpdateStatusDto == null) {
       throw new OperationNotImplementException("Operation not implement",
@@ -366,8 +366,8 @@ public class ServiceServiceImpl implements ServiceService {
 
   @Override
   public DataPagingResponse<ServiceResponseDto> getServices(String systems, String status,
-                                                            String sort,
-                                                            String search, Integer limit, Integer page) {
+      String sort,
+      String search, Integer limit, Integer page) {
     Set<Integer> listSystemId = new HashSet<>();
     if (systems != null && !systems.isEmpty()) {
       String[] systemArrays = systems.trim().split(",");

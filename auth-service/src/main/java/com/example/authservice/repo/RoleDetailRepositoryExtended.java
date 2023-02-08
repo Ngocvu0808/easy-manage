@@ -6,7 +6,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 04/09/2020
  */
 public interface RoleDetailRepositoryExtended extends RoleDetailRepository {

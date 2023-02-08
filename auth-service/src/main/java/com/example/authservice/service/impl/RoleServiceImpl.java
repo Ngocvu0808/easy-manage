@@ -265,7 +265,7 @@ public class RoleServiceImpl implements RoleService {
 
   @Override
   public DataPagingResponse<RoleDtoExtended> getAllRole(Integer page, Integer limit, String search,
-                                                        String sort, Boolean isSystemRole) {
+      String sort, Boolean isSystemRole) {
     Map<String, String> map = SortingUtils.detectSortType(sort);
     Page<Role> marRolePage = roleRepository
         .findAll(new RoleFilter().getByFilter(search, map, false, isSystemRole),

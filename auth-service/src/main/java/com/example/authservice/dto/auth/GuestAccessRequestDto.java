@@ -3,7 +3,7 @@ package com.example.authservice.dto.auth;
 import java.util.List;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 19/05/2021
  */
 public class GuestAccessRequestDto {

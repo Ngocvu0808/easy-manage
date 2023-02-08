@@ -8,7 +8,7 @@ import com.example.authservice.entities.enums.ApiType;
 import com.example.authservice.entities.enums.HttpMethod;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 05/08/2020
  */
 public class ApiDto {

@@ -6,16 +6,18 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-public interface RoleGroupRepository extends JpaRepository<RoleGroup, Integer>, JpaSpecificationExecutor<RoleGroup> {
-    RoleGroup findByRoleIdAndGroupId(Integer roleId, Integer groupId);
+public interface RoleGroupRepository extends JpaRepository<RoleGroup, Integer>,
+    JpaSpecificationExecutor<RoleGroup> {
 
-    List<RoleGroup> findByGroupIdAndRoleIdAndIsDeletedFalse(Integer groupId, Integer roleId);
+  RoleGroup findByRoleIdAndGroupId(Integer roleId, Integer groupId);
 
-    List<RoleGroup> findByGroupIdAndIsDeletedFalse(Integer groupId);
+  List<RoleGroup> findByGroupIdAndRoleIdAndIsDeletedFalse(Integer groupId, Integer roleId);
 
-    List<RoleGroup> findAllByIsDeletedFalseAndGroupIdIn(List<Integer> idList);
+  List<RoleGroup> findByGroupIdAndIsDeletedFalse(Integer groupId);
 
-    List<RoleGroup> findAllByIsDeletedFalse();
+  List<RoleGroup> findAllByIsDeletedFalseAndGroupIdIn(List<Integer> idList);
 
-    List<RoleGroup> findAllByRoleIdAndIsDeletedFalse(Integer roleId);
+  List<RoleGroup> findAllByIsDeletedFalse();
+
+  List<RoleGroup> findAllByRoleIdAndIsDeletedFalse(Integer roleId);
 }

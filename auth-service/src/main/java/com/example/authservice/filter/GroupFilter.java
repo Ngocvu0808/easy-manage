@@ -20,7 +20,7 @@ public class GroupFilter extends EntityFilter<Group> {
 
       List<Predicate> predicates = new ArrayList<>();
       Join<Object, Object> roleGroups = root.join("roles", JoinType.LEFT);
-      Join<Object, Object> role  = roleGroups.join("role", JoinType.LEFT);
+      Join<Object, Object> role = roleGroups.join("role", JoinType.LEFT);
 
       if (search != null && !search.isBlank()) {
         Predicate nameGroup = criteriaBuilder

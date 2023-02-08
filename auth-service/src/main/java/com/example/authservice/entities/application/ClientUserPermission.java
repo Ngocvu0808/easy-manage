@@ -8,7 +8,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 31/07/2020
  */
 @Data

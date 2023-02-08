@@ -7,6 +7,7 @@ import java.util.Date;
  * @create_date 02/09/2022
  */
 public class RoleDto {
+
   private Integer id;
   private String code;
   private String note;

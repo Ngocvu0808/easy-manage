@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 05/08/2020
  */
 public class ApiUpdateDto {

@@ -3,7 +3,7 @@ package com.example.authservice.dto.app;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/06/2020
  */
 public class RenewTokenDto {

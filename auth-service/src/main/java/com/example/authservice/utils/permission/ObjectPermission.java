@@ -7,6 +7,7 @@ import java.util.List;
  * @create_date 02/09/2022
  */
 public class ObjectPermission {
+
   private String name;
   private List<SpecificPermission> permissionList;
 

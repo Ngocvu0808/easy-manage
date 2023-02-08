@@ -3,7 +3,7 @@ package com.example.authservice.dto.auth;
 import com.example.authservice.dto.role.RoleDto;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 23/08/2020
  */
 public class RoleDtoExtended extends RoleDto {

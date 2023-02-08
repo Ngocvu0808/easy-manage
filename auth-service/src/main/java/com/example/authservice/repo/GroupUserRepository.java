@@ -6,19 +6,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface GroupUserRepository extends JpaRepository<GroupUser, Integer> {
-    int countAllByGroupIdAndIsDeleted(Integer groupId, Boolean delete);
 
-    List<GroupUser> findByUserIdAndIsDeletedFalse(Integer userId);
+  int countAllByGroupIdAndIsDeleted(Integer groupId, Boolean delete);
 
-    List<GroupUser> findByUserIdAndGroupId(Integer userId, Integer groupId);
+  List<GroupUser> findByUserIdAndIsDeletedFalse(Integer userId);
 
-    List<GroupUser> findByUserIdAndGroupIdAndIsDeletedFalse(Integer userId, Integer groupId);
+  List<GroupUser> findByUserIdAndGroupId(Integer userId, Integer groupId);
 
-    List<GroupUser> findByGroupIdAndUserIdAndIsDeletedFalse(Integer groupId, Integer userId);
+  List<GroupUser> findByUserIdAndGroupIdAndIsDeletedFalse(Integer userId, Integer groupId);
 
-    List<GroupUser> findByGroupIdAndIsDeletedFalse(Integer groupId);
+  List<GroupUser> findByGroupIdAndUserIdAndIsDeletedFalse(Integer groupId, Integer userId);
 
-    List<GroupUser> findAllByIsDeletedFalse();
+  List<GroupUser> findByGroupIdAndIsDeletedFalse(Integer groupId);
 
-    List<GroupUser> findAllByGroupIdInAndIsDeletedFalse(List<Integer> groupIdList);
+  List<GroupUser> findAllByIsDeletedFalse();
+
+  List<GroupUser> findAllByGroupIdInAndIsDeletedFalse(List<Integer> groupIdList);
 }

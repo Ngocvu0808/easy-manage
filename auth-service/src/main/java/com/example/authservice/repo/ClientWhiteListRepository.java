@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 05/06/2020
  */
 public interface ClientWhiteListRepository extends JpaRepository<ClientWhiteList, Integer> {

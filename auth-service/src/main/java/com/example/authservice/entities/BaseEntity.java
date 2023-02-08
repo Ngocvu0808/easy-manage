@@ -18,6 +18,7 @@ import java.util.Date;
 @MappedSuperclass
 @EntityListeners({AuditingEntityListener.class})
 public class BaseEntity<T> {
+
   @Column(
       name = "creator_id",
       updatable = false,
@@ -89,7 +90,7 @@ public class BaseEntity<T> {
     } else if (!(o instanceof BaseEntity)) {
       return false;
     } else {
-      BaseEntity<?> other = (BaseEntity)o;
+      BaseEntity<?> other = (BaseEntity) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
@@ -123,7 +124,8 @@ public class BaseEntity<T> {
           return false;
         }
 
-        label110: {
+        label110:
+        {
           Object this$businessId = this.getBusinessId();
           Object other$businessId = other.getBusinessId();
           if (this$businessId == null) {
@@ -137,7 +139,8 @@ public class BaseEntity<T> {
           return false;
         }
 
-        label103: {
+        label103:
+        {
           Object this$modifiedTime = this.getModifiedTime();
           Object other$modifiedTime = other.getModifiedTime();
           if (this$modifiedTime == null) {
@@ -161,7 +164,8 @@ public class BaseEntity<T> {
           return false;
         }
 
-        label89: {
+        label89:
+        {
           Object this$isDeleted = this.getIsDeleted();
           Object other$isDeleted = other.getIsDeleted();
           if (this$isDeleted == null) {
@@ -175,7 +179,8 @@ public class BaseEntity<T> {
           return false;
         }
 
-        label82: {
+        label82:
+        {
           Object this$creatorUser = this.getCreatorUser();
           Object other$creatorUser = other.getCreatorUser();
           if (this$creatorUser == null) {
@@ -245,7 +250,12 @@ public class BaseEntity<T> {
   }
 
   public String toString() {
-    return "BaseEntity(creatorUserId=" + this.getCreatorUserId() + ", updaterUserId=" + this.getUpdaterUserId() + ", deleterUserId=" + this.getDeleterUserId() + ", businessId=" + this.getBusinessId() + ", modifiedTime=" + this.getModifiedTime() + ", createdTime=" + this.getCreatedTime() + ", isDeleted=" + this.getIsDeleted() + ", creatorUser=" + this.getCreatorUser() + ", updaterUser=" + this.getUpdaterUser() + ", deleterUser=" + this.getDeleterUser() + ")";
+    return "BaseEntity(creatorUserId=" + this.getCreatorUserId() + ", updaterUserId="
+        + this.getUpdaterUserId() + ", deleterUserId=" + this.getDeleterUserId() + ", businessId="
+        + this.getBusinessId() + ", modifiedTime=" + this.getModifiedTime() + ", createdTime="
+        + this.getCreatedTime() + ", isDeleted=" + this.getIsDeleted() + ", creatorUser="
+        + this.getCreatorUser() + ", updaterUser=" + this.getUpdaterUser() + ", deleterUser="
+        + this.getDeleterUser() + ")";
   }
 
   public T getCreatorUserId() {

@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/08/2020
  */
 @Data

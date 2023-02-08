@@ -7,6 +7,7 @@ import java.util.Base64;
  * @create_date 02/09/2022
  */
 public class EncodeUtils {
+
   public EncodeUtils() {
   }
 
@@ -31,7 +32,7 @@ public class EncodeUtils {
     byte[] var2 = hashInBytes;
     int var3 = hashInBytes.length;
 
-    for(int var4 = 0; var4 < var3; ++var4) {
+    for (int var4 = 0; var4 < var3; ++var4) {
       byte b = var2[var4];
       sb.append(String.format("%02x", b));
     }

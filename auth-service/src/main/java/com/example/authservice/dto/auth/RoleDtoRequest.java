@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created 06/03/2020
  */
 public class RoleDtoRequest {

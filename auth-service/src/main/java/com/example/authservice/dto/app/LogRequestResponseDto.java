@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.Date;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 31/08/2020
  */
 @JsonIgnoreProperties(ignoreUnknown = true)

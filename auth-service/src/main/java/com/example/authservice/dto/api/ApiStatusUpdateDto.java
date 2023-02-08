@@ -6,7 +6,7 @@ import com.example.authservice.entities.enums.ApiStatus;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 05/08/2020
  */
 public class ApiStatusUpdateDto {

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 24/03/2020
  */
 public class UpdateStatusUserListDto {

@@ -42,7 +42,7 @@ public class AuthController {
       MediaType.APPLICATION_OCTET_STREAM_VALUE}, consumes = {MediaType.APPLICATION_JSON_VALUE,
       MediaType.APPLICATION_OCTET_STREAM_VALUE})
   public ResponseEntity<?> login(HttpServletRequest request, HttpServletResponse response,
-                                 @RequestBody LoginRequestDto dataLogin) {
+      @RequestBody LoginRequestDto dataLogin) {
     try {
       LoginResponseDto data = authService.login(request, dataLogin);
       return new ResponseEntity<>(

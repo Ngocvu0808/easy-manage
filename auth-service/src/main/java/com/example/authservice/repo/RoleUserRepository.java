@@ -11,23 +11,24 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoleUserRepository extends JpaRepository<RoleUser, Integer> {
-    List<RoleUser> findAllByUserId(Integer userId);
 
-    List<RoleUser> findAllByIsDeletedFalse();
+  List<RoleUser> findAllByUserId(Integer userId);
 
-    Optional<RoleUser> findByRoleIdAndUserIdAndIsDeletedIsFalse(Integer roleId, Integer userId);
+  List<RoleUser> findAllByIsDeletedFalse();
 
-    @Query("SELECT r FROM RoleUser r WHERE r.userId=:userId AND r.isDeleted = FALSE")
-    List<RoleUser> findListRoleActive(@Param("userId") Integer userId);
+  Optional<RoleUser> findByRoleIdAndUserIdAndIsDeletedIsFalse(Integer roleId, Integer userId);
 
-    Optional<RoleUser> findByUserIdAndRoleIdAndIsDeletedFalse(Integer userId, Integer roleId);
+  @Query("SELECT r FROM RoleUser r WHERE r.userId=:userId AND r.isDeleted = FALSE")
+  List<RoleUser> findListRoleActive(@Param("userId") Integer userId);
 
-    @Transactional
-    @Modifying(
-            clearAutomatically = true
-    )
-    @Query("UPDATE RoleUser r SET r.isDeleted=TRUE WHERE r.userId <> 1")
-    void deleteAllRoleUser(Integer deleterId);
+  Optional<RoleUser> findByUserIdAndRoleIdAndIsDeletedFalse(Integer userId, Integer roleId);
 
-    List<RoleUser> findAllByRoleIdAndIsDeletedFalse(Integer roleId);
+  @Transactional
+  @Modifying(
+      clearAutomatically = true
+  )
+  @Query("UPDATE RoleUser r SET r.isDeleted=TRUE WHERE r.userId <> 1")
+  void deleteAllRoleUser(Integer deleterId);
+
+  List<RoleUser> findAllByRoleIdAndIsDeletedFalse(Integer roleId);
 }

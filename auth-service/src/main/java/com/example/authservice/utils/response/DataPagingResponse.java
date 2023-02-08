@@ -7,6 +7,7 @@ import java.util.List;
  * @create_date 02/09/2022
  */
 public class DataPagingResponse<T> {
+
   private List<T> list;
   private long num;
   private long totalPage;
@@ -53,11 +54,12 @@ public class DataPagingResponse<T> {
     } else if (!(o instanceof DataPagingResponse)) {
       return false;
     } else {
-      DataPagingResponse<?> other = (DataPagingResponse)o;
+      DataPagingResponse<?> other = (DataPagingResponse) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
-        label35: {
+        label35:
+        {
           Object this$list = this.getList();
           Object other$list = other.getList();
           if (this$list == null) {
@@ -92,16 +94,17 @@ public class DataPagingResponse<T> {
     Object $list = this.getList();
     result = result * 59 + ($list == null ? 43 : $list.hashCode());
     long $num = this.getNum();
-    result = result * 59 + (int)($num >>> 32 ^ $num);
+    result = result * 59 + (int) ($num >>> 32 ^ $num);
     long $totalPage = this.getTotalPage();
-    result = result * 59 + (int)($totalPage >>> 32 ^ $totalPage);
+    result = result * 59 + (int) ($totalPage >>> 32 ^ $totalPage);
     long $currentPage = this.getCurrentPage();
-    result = result * 59 + (int)($currentPage >>> 32 ^ $currentPage);
+    result = result * 59 + (int) ($currentPage >>> 32 ^ $currentPage);
     return result;
   }
 
   public String toString() {
     List var10000 = this.getList();
-    return "DataPagingResponse(list=" + var10000 + ", num=" + this.getNum() + ", totalPage=" + this.getTotalPage() + ", currentPage=" + this.getCurrentPage() + ")";
+    return "DataPagingResponse(list=" + var10000 + ", num=" + this.getNum() + ", totalPage="
+        + this.getTotalPage() + ", currentPage=" + this.getCurrentPage() + ")";
   }
 }

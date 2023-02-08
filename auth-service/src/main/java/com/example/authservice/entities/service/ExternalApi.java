@@ -12,7 +12,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 31/07/2020
  */
 @EqualsAndHashCode(callSuper = true)

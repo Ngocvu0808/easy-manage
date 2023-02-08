@@ -1,7 +1,7 @@
 package com.example.authservice.dto.appservice;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/08/2020
  */
 public class SystemCustomDto {

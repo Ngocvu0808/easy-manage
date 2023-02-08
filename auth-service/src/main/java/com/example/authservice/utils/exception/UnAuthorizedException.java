@@ -5,6 +5,7 @@ package com.example.authservice.utils.exception;
  * @create_date 02/09/2022
  */
 public class UnAuthorizedException extends BaseException {
+
   public UnAuthorizedException(String message) {
     super(message);
   }

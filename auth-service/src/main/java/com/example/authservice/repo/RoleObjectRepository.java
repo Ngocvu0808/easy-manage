@@ -7,11 +7,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RoleObjectRepository extends JpaRepository<RoleObject, Integer> {
-    List<RoleObject> findAllByUserIdAndIsDeletedFalse(Integer userId);
 
-    Optional<RoleObject> findByServiceNameAndObjectIdAndUserIdAndRoleIdAndIsDeletedFalse(String serviceName, Integer objectId, Integer userId, Integer roleId);
+  List<RoleObject> findAllByUserIdAndIsDeletedFalse(Integer userId);
 
-    List<RoleObject> findAllByServiceNameAndObjectIdAndUserIdAndIsDeletedFalse(String serviceName, Integer objectId, Integer userId);
+  Optional<RoleObject> findByServiceNameAndObjectIdAndUserIdAndRoleIdAndIsDeletedFalse(
+      String serviceName, Integer objectId, Integer userId, Integer roleId);
 
-    List<RoleObject> findAllByServiceNameAndObjectIdAndUserIdAndRoleIdInAndIsDeletedFalse(String serviceName, Integer objectId, Integer userId, List<Integer> roleIds);
+  List<RoleObject> findAllByServiceNameAndObjectIdAndUserIdAndIsDeletedFalse(String serviceName,
+      Integer objectId, Integer userId);
+
+  List<RoleObject> findAllByServiceNameAndObjectIdAndUserIdAndRoleIdInAndIsDeletedFalse(
+      String serviceName, Integer objectId, Integer userId, List<Integer> roleIds);
 }

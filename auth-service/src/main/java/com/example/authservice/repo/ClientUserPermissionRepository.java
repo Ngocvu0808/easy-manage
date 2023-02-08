@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 01/08/2020
  */
 public interface ClientUserPermissionRepository extends
@@ -15,9 +15,11 @@ public interface ClientUserPermissionRepository extends
 
   List<ClientUserPermission> findAllByClientUserIdAndIsDeletedFalse(Integer clientUserId);
 
-  Optional<ClientUserPermission> findByClientUserIdAndRoleIdAndIsDeletedFalse(Integer clientUserId, Integer roleId);
+  Optional<ClientUserPermission> findByClientUserIdAndRoleIdAndIsDeletedFalse(Integer clientUserId,
+      Integer roleId);
 
-  List<ClientUserPermission> findByClientUserIdAndRoleIdInAndIsDeletedFalse(Integer clientUserId, List<Integer> roleIds);
+  List<ClientUserPermission> findByClientUserIdAndRoleIdInAndIsDeletedFalse(Integer clientUserId,
+      List<Integer> roleIds);
 
   List<ClientUserPermission> findAllByClientUserIdInAndIsDeletedFalse(List<Integer> clientUserIds);
 }

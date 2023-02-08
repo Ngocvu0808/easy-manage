@@ -19,26 +19,18 @@ import com.example.authservice.entities.enums.*;
 import com.example.authservice.exception.AuthServiceMessageCode;
 import com.example.authservice.service.iface.AccessTokenService;
 import com.example.authservice.service.iface.ApplicationService;
-import com.example.authservice.service.iface.AuthGuardService;
+import com.example.authservice.utils.auth.AuthGuardService;
 import com.example.authservice.service.iface.AuthService;
 import com.example.authservice.utils.ServiceInfo;
 import com.example.authservice.utils.SortingUtils;
 import com.example.authservice.utils.exception.*;
 import com.example.authservice.utils.response.*;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,7 +60,8 @@ public class ApplicationController {
       @RequestBody ClientRequestDto clientRequestDto) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          Arrays.asList(PermissionObjectCode.ClientServiceCode.CLIENT_ADD, PermissionObjectCode.UserServicePermissionCode.DEVELOPER))) {
+          Arrays.asList(PermissionObjectCode.ClientServiceCode.CLIENT_ADD,
+              PermissionObjectCode.UserServicePermissionCode.DEVELOPER))) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -146,7 +139,8 @@ public class ApplicationController {
             , HttpStatus.OK);
       }
       Boolean isGetAll = authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          Arrays.asList(PermissionObjectCode.ClientServiceCode.CLIENT_GET_ALL, PermissionObjectCode.UserServicePermissionCode.DEVELOPER));
+          Arrays.asList(PermissionObjectCode.ClientServiceCode.CLIENT_GET_ALL,
+              PermissionObjectCode.UserServicePermissionCode.DEVELOPER));
       Integer userId = authGuard.getUserId(request);
       DataPagingResponse<ClientResponseDto> data = authService
           .getAllClient(userId, page, limit, search, status, sort, isGetAll);
@@ -455,7 +449,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_LIST_IP)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_LIST_IP)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -613,7 +607,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_CHANGE_STATUS_TOKEN)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_CHANGE_STATUS_TOKEN)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false)
                 .message(Constants.FORBIDDEN).errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -667,7 +661,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_TOKEN)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_TOKEN)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -716,7 +710,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, appId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_LIST_REFRESH_TOKEN)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_LIST_REFRESH_TOKEN)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -773,7 +767,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, appId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_LIST_ACCESS_TOKEN)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_LIST_ACCESS_TOKEN)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -941,7 +935,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_ADD_USER)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_ADD_USER)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1004,7 +998,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_USERS)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_USERS)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1053,7 +1047,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_USER)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_USER)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1102,7 +1096,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_UPDATE_ROLE_USER)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_UPDATE_ROLE_USER)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1191,7 +1185,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_UPDATE_STATUS_ACCESS_TOKEN)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_UPDATE_STATUS_ACCESS_TOKEN)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1252,7 +1246,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_ADD_SERVICE)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_ADD_SERVICE)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1306,7 +1300,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_SERVICE)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_SERVICE)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1347,7 +1341,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_PENDING_SERVICE)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_PENDING_SERVICE)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1401,7 +1395,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_SERVICE)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_SERVICE)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1456,7 +1450,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_SERVICES)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_SERVICES)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1498,7 +1492,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_SERVICE_STATUS)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_SERVICE_STATUS)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1545,7 +1539,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_ADD_API)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_ADD_API)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1599,7 +1593,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_API)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_API)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1653,7 +1647,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_SERVICE_GET_APIS)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_SERVICE_GET_APIS)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1699,7 +1693,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, id, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_LIST_ACCESS_TOKEN)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_LIST_ACCESS_TOKEN)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1822,7 +1816,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, appId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_GET_ALL_API_KEY)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_GET_ALL_API_KEY)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1877,7 +1871,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, clientId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_CREATE_API_KEY)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_CREATE_API_KEY)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -1957,7 +1951,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, appId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_API_KEY)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_DELETE_API_KEY)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -2005,7 +1999,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, appId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_CANCEL_API_KEY)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_CANCEL_API_KEY)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -2053,7 +2047,7 @@ public class ApplicationController {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.USER,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER) ||
           !authGuard.checkPermission(request, appId, PermissionObjectCode.APPLICATION,
-             PermissionObjectCode.ClientServiceCode.CLIENT_REFRESH_API_KEY)) {
+              PermissionObjectCode.ClientServiceCode.CLIENT_REFRESH_API_KEY)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())

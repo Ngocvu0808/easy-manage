@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/06/2020
  */
 public interface ApiKeyRepository extends JpaRepository<ApiKey, Integer> {

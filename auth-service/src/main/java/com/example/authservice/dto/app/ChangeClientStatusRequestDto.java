@@ -4,7 +4,7 @@ import com.example.authservice.entities.enums.ClientStatus;
 import lombok.Data;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 06/07/2020
  */
 @Data

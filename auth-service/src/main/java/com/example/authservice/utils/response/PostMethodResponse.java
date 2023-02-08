@@ -5,6 +5,7 @@ package com.example.authservice.utils.response;
  * @create_date 02/09/2022
  */
 public class PostMethodResponse<T> {
+
   private Boolean status;
   private String message;
   private Integer httpCode;
@@ -64,11 +65,12 @@ public class PostMethodResponse<T> {
     } else if (!(o instanceof PostMethodResponse)) {
       return false;
     } else {
-      PostMethodResponse<?> other = (PostMethodResponse)o;
+      PostMethodResponse<?> other = (PostMethodResponse) o;
       if (!other.canEqual(this)) {
         return false;
       } else {
-        label71: {
+        label71:
+        {
           Object this$status = this.getStatus();
           Object other$status = other.getStatus();
           if (this$status == null) {
@@ -92,7 +94,8 @@ public class PostMethodResponse<T> {
           return false;
         }
 
-        label57: {
+        label57:
+        {
           Object this$httpCode = this.getHttpCode();
           Object other$httpCode = other.getHttpCode();
           if (this$httpCode == null) {
@@ -153,10 +156,13 @@ public class PostMethodResponse<T> {
 
   public String toString() {
     Boolean var10000 = this.getStatus();
-    return "PostMethodResponse(status=" + var10000 + ", message=" + this.getMessage() + ", httpCode=" + this.getHttpCode() + ", id=" + this.getId() + ", errorCode=" + this.getErrorCode() + ")";
+    return "PostMethodResponse(status=" + var10000 + ", message=" + this.getMessage()
+        + ", httpCode=" + this.getHttpCode() + ", id=" + this.getId() + ", errorCode="
+        + this.getErrorCode() + ")";
   }
 
-  public PostMethodResponse(final Boolean status, final String message, final Integer httpCode, final T id, final String errorCode) {
+  public PostMethodResponse(final Boolean status, final String message, final Integer httpCode,
+      final T id, final String errorCode) {
     this.status = status;
     this.message = message;
     this.httpCode = httpCode;
@@ -165,6 +171,7 @@ public class PostMethodResponse<T> {
   }
 
   public static class PostMethodResponseBuilder<T> {
+
     private Boolean status;
     private String message;
     private Integer httpCode;
@@ -200,11 +207,14 @@ public class PostMethodResponse<T> {
     }
 
     public PostMethodResponse<T> build() {
-      return new PostMethodResponse(this.status, this.message, this.httpCode, this.id, this.errorCode);
+      return new PostMethodResponse(this.status, this.message, this.httpCode, this.id,
+          this.errorCode);
     }
 
     public String toString() {
-      return "PostMethodResponse.PostMethodResponseBuilder(status=" + this.status + ", message=" + this.message + ", httpCode=" + this.httpCode + ", id=" + this.id + ", errorCode=" + this.errorCode + ")";
+      return "PostMethodResponse.PostMethodResponseBuilder(status=" + this.status + ", message="
+          + this.message + ", httpCode=" + this.httpCode + ", id=" + this.id + ", errorCode="
+          + this.errorCode + ")";
     }
   }
 }

@@ -11,16 +11,18 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 import java.util.Optional;
 
-public interface GroupRepository extends JpaRepository<Group, Integer>, JpaSpecificationExecutor<Group> {
-    @EntityGraph("GroupRoles")
-    Page<Group> findAll(Specification<Group> specification, Pageable pageable);
+public interface GroupRepository extends JpaRepository<Group, Integer>,
+    JpaSpecificationExecutor<Group> {
 
-    Group findByCodeAndIsDeletedFalse(String code);
+  @EntityGraph("GroupRoles")
+  Page<Group> findAll(Specification<Group> specification, Pageable pageable);
 
-    @EntityGraph("GroupRoles")
-    Optional<Group> findById(Integer id);
+  Group findByCodeAndIsDeletedFalse(String code);
 
-    List<Group> findAllByIsDeletedFalse();
+  @EntityGraph("GroupRoles")
+  Optional<Group> findById(Integer id);
 
-    List<Group> findAllByIdInAndIsDeletedFalse(List<Integer> ids);
+  List<Group> findAllByIsDeletedFalse();
+
+  List<Group> findAllByIdInAndIsDeletedFalse(List<Integer> ids);
 }

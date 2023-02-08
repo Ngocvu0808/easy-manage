@@ -10,5 +10,6 @@ import java.util.List;
  * @create_date 09/11/2021
  */
 public interface UserActivityRepository extends JpaRepository<UserActivity, Integer> {
+
   List<UserActivity> findByToken(String token);
 }

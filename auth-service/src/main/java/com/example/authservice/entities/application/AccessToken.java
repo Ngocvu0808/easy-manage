@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * @author bontk
+ * @author nguyen
  * @created_date 03/06/2020
  */
 
