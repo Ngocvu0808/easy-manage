@@ -4,6 +4,7 @@ import com.example.product.config.Constants;
 import com.example.product.config.MessageCode;
 import com.example.product.config.PermissionObjectCode;
 import com.example.product.dto.request.business.BuyingProductRequest;
+import com.example.product.dto.request.business.RevertRequestData;
 import com.example.product.dto.request.business.SellingProductRequest;
 import com.example.product.dto.response.GetProductResponse;
 import com.example.product.entity.TradeHistory;
@@ -185,7 +186,7 @@ public class TradingController {
 
   @PostMapping("/revert")
   public ResponseEntity<?> revert(HttpServletRequest request,
-      @RequestParam(name = "batch", required = true, defaultValue = "") String batch) {
+      @RequestBody RevertRequestData data) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
           PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
@@ -196,7 +197,7 @@ public class TradingController {
             , HttpStatus.OK);
       }
 
-      boolean result = businessService.revert(batch);
+      boolean result = businessService.revert(data.getBatch());
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).data(result)
               .message(Constants.SUCCESS_MSG).errorCode(HttpStatus.OK.name().toLowerCase())

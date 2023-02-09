@@ -1,0 +1,118 @@
+package com.example.business.service.impl.report;
+
+import com.example.business.config.Constants;
+import com.example.business.config.ErrorCodeEnum;
+import com.example.business.dto.response.FinanceReportResponse;
+import com.example.business.entity.Finance;
+import com.example.business.repo.FinanceRepository;
+import com.example.business.service.iface.report.ReportService;
+import com.example.business.utils.DateUtil;
+import com.example.business.utils.cache.CacheRedisService;
+import com.example.business.utils.exception.ResourceNotFoundException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ReportServiceImpl implements ReportService {
+
+  private static final Logger logger = org.slf4j.LoggerFactory
+      .getLogger(ReportServiceImpl.class);
+  private final CacheRedisService cacheRedisService;
+  private final FinanceRepository financeRepository;
+  public ReportServiceImpl(CacheRedisService cacheRedisService, FinanceRepository financeRepository) {
+    this.cacheRedisService = cacheRedisService;
+    this.financeRepository = financeRepository;
+  }
+  @Value("${spring.redis.key.balance}")
+  private String balanceKey;
+  @Value("${product-service.url}")
+  private String productServiceUrl;
+  @Value("${product-service.auth-key}")
+  private String productServiceAuthKey;
+  @Value("${product-service.end-point.get-all-value}")
+  private String allValueEndPoint;
+  @Override
+  public long getBalance() {
+    long result = 0L;
+    String balance = cacheRedisService.getValue(balanceKey).toString();
+    if (balance.isBlank()) {
+      Finance lastRecord = financeRepository.findTopByOrderByIdDesc();
+      if (lastRecord != null) {
+        result = lastRecord.getBalance();
+      }
+    } else {
+      result = Long.parseLong(balance);
+    }
+    return result;
+  }
+
+  @Override
+  public List<FinanceReportResponse> getAllValue(long start, long end)
+      throws ResourceNotFoundException, ParseException {
+    List<FinanceReportResponse> result = new ArrayList<>();
+    if (start == 0 && end == 0) {
+      FinanceReportResponse each = new FinanceReportResponse();
+      Finance finance = financeRepository.findTopByUpdateTimeIsLessThanOrderByIdDesc(DateUtil.getOnlyDateFromTimeStamp(new Date().getTime()));
+      if (finance != null) {
+        each.setBalance(finance.getBalance());
+      }
+      each.setTotalProduct( callProductGetAllValue(0));
+      result.add(each);
+      return result;
+    }
+    result.add(getEachReport(start));
+    result.add(getEachReport(end));
+    return result;
+  }
+
+  private FinanceReportResponse getEachReport(long time) throws ResourceNotFoundException {
+    FinanceReportResponse result = new FinanceReportResponse();
+    Finance finance = financeRepository.findTopByUpdateTimeIsLessThanOrderByIdDesc(time);
+    if (finance != null) {
+      result.setBalance(finance.getBalance());
+    }
+    result.setTotalProduct(callProductGetAllValue(time));
+    return result;
+  }
+
+  private long callProductGetAllValue(long time) throws ResourceNotFoundException {
+    long result = 0L;
+    Map<String, Object> params = new HashMap<>();
+    params.put("time", time);
+    HttpResponse<JsonNode> response = Unirest.get(
+            productServiceUrl.concat(allValueEndPoint))
+        .header("Content-Type", "application/json")
+        .header("x-api-key", productServiceAuthKey)
+        .header("agent", Constants.AGENT)
+        .queryString(params)
+        .asJson();
+    logger.info("response call api VP: {}", response.getBody());
+    JsonNode jsonNode = null;
+    if (response != null) {
+      jsonNode = response.getBody();
+      if (response.getStatus() != 200) {
+        throw new ResourceNotFoundException(ErrorCodeEnum.BUSINESS_ERROR);
+      }
+      if (jsonNode.getObject().has("error")
+          && jsonNode.getObject().getInt("error") != 0) {
+        throw new ResourceNotFoundException(ErrorCodeEnum.BUSINESS_ERROR);
+      }
+      if (jsonNode != null) {
+        logger.info("response from Business-service: {} {}", response.getStatus(),
+            jsonNode.toString());
+      }
+      result = jsonNode.getObject().getLong("data");
+    }
+    return result;
+  }
+}

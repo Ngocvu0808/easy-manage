@@ -5,6 +5,7 @@ import com.example.product.dto.request.UpdateProductRequest;
 import com.example.product.dto.response.GetProductResponse;
 import com.example.product.utils.exception.ResourceNotFoundException;
 import com.example.product.utils.response.DataPagingResponse;
+import java.text.ParseException;
 
 public interface ProductService {
 
@@ -19,5 +20,6 @@ public interface ProductService {
 
   boolean update(UpdateProductRequest request) throws ResourceNotFoundException;
 
+  long getAllValueProduct(long time) throws ParseException;
 
 }

@@ -11,8 +11,8 @@ public class UpdateProductRequest {
   private String code;
   private String name;
   private String type;
-  private long buyPrice;
+  private Long buyPrice;
+  private Long sellPrice;
   private String source;
-  private long inDate;
   private String status;
 }

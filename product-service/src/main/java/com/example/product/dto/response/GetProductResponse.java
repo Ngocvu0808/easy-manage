@@ -15,4 +15,5 @@ public class GetProductResponse {
   private long createDate;
   private long sellPrice;
   private long available;
+  private String status;
 }

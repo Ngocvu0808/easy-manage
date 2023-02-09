@@ -26,6 +26,9 @@ import com.example.authservice.service.iface.AuthService;
 import com.example.authservice.service.iface.CryptoService;
 import com.example.authservice.service.iface.UserService;
 import com.example.authservice.utils.*;
+import com.example.authservice.utils.KeyConstants.Headers;
+import com.example.authservice.utils.KeyConstants.JSONKey;
+import com.example.authservice.utils.KeyConstants.RedisKey;
 import com.example.authservice.utils.cache.CacheRedisService;
 import com.example.authservice.utils.exception.*;
 import com.example.authservice.utils.permission.Permission;
@@ -148,12 +151,12 @@ public class AuthServiceImpl implements AuthService {
           ServiceInfo.getId() + AuthServiceMessageCode.PASSWORD_NOT_NULL);
     }
     String username = loginRequestDto.getUserName();
-    Optional<User> userOptional = userRepository.findByUsername(username);
+    List<User> userOptional = userRepository.findByUsername(username);
     if (userOptional.isEmpty()) {
       throw new UnAuthorizedException("username incorrect",
           ServiceInfo.getId() + AuthServiceMessageCode.USERNAME_INCORRECT);
     }
-    User user = userOptional.get();
+    User user = userOptional.get(0);
     String password;
     try {
       password = cryptoService.rsaDecrypt(loginRequestDto.getPassword(), privateKey);
@@ -174,12 +177,15 @@ public class AuthServiceImpl implements AuthService {
     Set<Object> keys = redisService.keys(prefix + user.getUuid() + ":*");
     if (keys != null && !keys.isEmpty()) {
       Iterator<?> iter = keys.iterator();
-      Object firstKey = iter.next();
-      String token = firstKey.toString().split(":")[3];
-      redisService.setExpireTime(firstKey.toString(), expireToken, TimeUnit.SECONDS);
-      LoginResponseDto responseDto = new LoginResponseDto();
-      responseDto.setToken(token);
-      return responseDto;
+      Set firstKey = new HashSet<>((Collection) iter.next());
+
+      if (firstKey != null && firstKey.size() >0) {
+        String token = firstKey.toString().replaceAll("\\[|\\]", "").split(":")[3];
+        redisService.setExpireTime(firstKey.toString(), expireToken, TimeUnit.SECONDS);
+        LoginResponseDto responseDto = new LoginResponseDto();
+        responseDto.setToken(token);
+        return responseDto;
+      }
     }
     Permission permission = userService.getPermissionsOfUser(user.getId());
     String jwtEncode = getJwt(user, null, permission, -1);
@@ -226,11 +232,11 @@ public class AuthServiceImpl implements AuthService {
     logger.info("headers: {}", JsonUtils.toJson(RequestUtils.getRequestHeadersInMap(request)));
 
     // check api_key flow
-    String apiKey = request.getHeader(KeyConstants.Headers.X_API_KEY);
+    String apiKey = request.getHeader(Headers.X_API_KEY);
     if (apiKey != null && !apiKey.isEmpty()) {
       Map<String, String> res = this.getJwtOfApiKey(apiKey);
       if (res != null && !res.isEmpty()) {
-        String jwt = res.get(KeyConstants.RedisKey.JWT);
+        String jwt = res.get(RedisKey.JWT);
         if (!jwtGenerator.checkValidJWT(jwt)) {
           throw new UnAuthorizedException("jwt invalid",
               ServiceInfo.getId() + AuthServiceMessageCode.JWT_INVALID);
@@ -242,7 +248,7 @@ public class AuthServiceImpl implements AuthService {
           throw new UnAuthorizedException("ip request is null or empty",
               ServiceInfo.getId() + AuthServiceMessageCode.IP_INVALID);
         }
-        String ipWhiteList = res.get(KeyConstants.RedisKey.IP_WHITELIST);
+        String ipWhiteList = res.get(RedisKey.IP_WHITELIST);
         if (ipWhiteList == null || ipWhiteList.isBlank()) {
           logger.info("ip whitelist is null or empty");
           throw new UnAuthorizedException("client api key invalid",
@@ -265,9 +271,9 @@ public class AuthServiceImpl implements AuthService {
       }
     }
 
-    String accessToken = request.getHeader(KeyConstants.Headers.ACCESS_TOKEN);
+    String accessToken = request.getHeader(Headers.ACCESS_TOKEN);
     if (accessToken != null && !accessToken.isEmpty()) {
-      String key = KeyConstants.RedisKey.AUTH_TOKEN + accessToken;
+      String key = RedisKey.AUTH_TOKEN + accessToken;
       if (redisService.exists(key)) {
         // check IP
         String ipRequest = request.getHeader(Constants.AGENT);
@@ -277,7 +283,7 @@ public class AuthServiceImpl implements AuthService {
               ServiceInfo.getId() + AuthServiceMessageCode.IP_INVALID);
         }
         String ipWhiteList = String.valueOf(
-            redisService.hGet(key, KeyConstants.RedisKey.IP_WHITELIST));
+            redisService.hGet(key, RedisKey.IP_WHITELIST));
         if (ipWhiteList == null || ipWhiteList.isBlank()) {
           logger.info("ip whitelist is null or empty");
           throw new UnAuthorizedException("token invalid",
@@ -295,11 +301,11 @@ public class AuthServiceImpl implements AuthService {
               ServiceInfo.getId() + AuthServiceMessageCode.IP_INVALID);
         }
         boolean approved = Boolean
-            .parseBoolean(redisService.hGet(key, KeyConstants.RedisKey.APPROVED).toString());
+            .parseBoolean(redisService.hGet(key, RedisKey.APPROVED).toString());
         long refreshTokenExp = Long
-            .parseLong(redisService.hGet(key, KeyConstants.RedisKey.REFRESH_EXP).toString());
+            .parseLong(redisService.hGet(key, RedisKey.REFRESH_EXP).toString());
         if (approved && refreshTokenExp > System.currentTimeMillis()) {
-          String jwtValue = String.valueOf(redisService.hGet(key, KeyConstants.RedisKey.JWT));
+          String jwtValue = String.valueOf(redisService.hGet(key, RedisKey.JWT));
           if (jwtValue == null || jwtValue.isBlank() || !jwtGenerator.checkValidJWT(jwtValue)) {
             throw new UnAuthorizedException("jwt invalid",
                 ServiceInfo.getId() + AuthServiceMessageCode.JWT_INVALID);
@@ -312,7 +318,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     // basic token base flow
-    String token = request.getHeader(KeyConstants.Headers.TOKEN);
+    String token = request.getHeader(Headers.TOKEN);
     if (token == null || token.isBlank()) {
       throw new UnAuthorizedException("token is null or empty",
           ServiceInfo.getId() + AuthServiceMessageCode.TOKEN_NULL);
@@ -325,8 +331,8 @@ public class AuthServiceImpl implements AuthService {
     Set<Object> keys = redisService.keys(pattern);
     Iterator<?> iter = keys.iterator();
     Object firstKey = iter.next();
-
-    String jwtValue = redisService.getValue(firstKey.toString()).toString();
+    String keyCheck = firstKey.toString().replaceAll("\\[|\\]","");
+    String jwtValue = redisService.getValue(keyCheck).toString();
     if (jwtValue == null || jwtValue.isBlank()) {
       throw new UnAuthorizedException("jwt is null or empty",
           ServiceInfo.getId() + AuthServiceMessageCode.JWT_NOT_FOUND);
@@ -367,8 +373,8 @@ public class AuthServiceImpl implements AuthService {
     Set<Object> keys = redisService.keys(pattern);
     Iterator<?> iter = keys.iterator();
     Object firstKey = iter.next();
-
-    String jwt = redisService.getValue(firstKey.toString()).toString();
+    String keyCheck = firstKey.toString().replaceAll("\\[|\\]","");
+    String jwt = redisService.getValue(keyCheck).toString();
     if (jwt == null || jwt.isBlank()) {
       throw new UnAuthorizedException("jwt is null or empty",
           ServiceInfo.getId() + AuthServiceMessageCode.JWT_NOT_FOUND);
@@ -402,8 +408,8 @@ public class AuthServiceImpl implements AuthService {
       Set<Object> keys = redisService.keys(pattern);
       Iterator<?> iter = keys.iterator();
       Object firstKey = iter.next();
-
-      String jwt = redisService.getValue(firstKey.toString()).toString();
+      String keyCheck = firstKey.toString().replaceAll("\\[|\\]","");
+      String jwt = redisService.getValue(keyCheck).toString();
       String jwtBody = EncodeUtils.decodeJWT(jwt);
       if (jwtBody == null) {
         logger.info("error when decode jwt");
@@ -432,8 +438,8 @@ public class AuthServiceImpl implements AuthService {
     Set<Object> keys = redisService.keys(pattern);
     Iterator<?> iter = keys.iterator();
     Object firstKey = iter.next();
-
-    String jwtValue = redisService.getValue(firstKey.toString()).toString();
+    String keyCheck = firstKey.toString().replaceAll("\\[|\\]","");
+    String jwtValue = redisService.getValue(keyCheck).toString();
     if (jwtValue == null || jwtValue.isBlank()) {
       throw new UnAuthorizedException(Constants.UNAUTHORIZED);
     }

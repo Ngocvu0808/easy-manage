@@ -5,13 +5,18 @@ import com.example.product.dto.request.AddProductRequest;
 import com.example.product.dto.request.UpdateProductRequest;
 import com.example.product.dto.response.GetProductResponse;
 import com.example.product.entity.Product;
+import com.example.product.entity.ProductReport;
 import com.example.product.entity.ProductStatus;
 import com.example.product.filter.ProductFilter;
+import com.example.product.repo.ProductReportRepository;
 import com.example.product.repo.ProductRepository;
 import com.example.product.service.iface.ProductService;
+import com.example.product.utils.DateUtil;
 import com.example.product.utils.SortingUtils;
+import com.example.product.utils.Utils;
 import com.example.product.utils.exception.ResourceNotFoundException;
 import com.example.product.utils.response.DataPagingResponse;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +34,11 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
-
-  public ProductServiceImpl(ProductRepository productRepository) {
+  private final ProductReportRepository productReportRepository;
+  public ProductServiceImpl(ProductRepository productRepository,
+      ProductReportRepository productReportRepository) {
     this.productRepository = productRepository;
+    this.productReportRepository = productReportRepository;
   }
 
   @Override
@@ -52,7 +59,7 @@ public class ProductServiceImpl implements ProductService {
   public DataPagingResponse<GetProductResponse> getAll(Integer page, Integer limit,
       String search, String status, String sort) {
     Map<String, String> sortMap = SortingUtils.detectSortType(sort);
-    Specification<Product> filter = new ProductFilter().filter(null, search, status, sortMap, false);
+    Specification<Product> filter = new ProductFilter().filter(null, search, status, sortMap);
     Page<Product> productPages = productRepository.findAll(filter, PageRequest.of(page - 1, limit));
 
     List<Product> products = productPages.getContent();
@@ -104,8 +111,21 @@ public class ProductServiceImpl implements ProductService {
       throw new ResourceNotFoundException(ErrorCodeEnum.PRODUCT_NOT_FOUND);
     }
     Product product = products.get();
-    BeanUtils.copyProperties(request, product);
+    Utils.myCopyProperties(request, product);
     productRepository.save(product);
-    return false;
+    return true;
+  }
+
+  @Override
+  public long getAllValueProduct(long time) throws ParseException {
+    long todayTime = time;
+    if (time == 0) {
+      todayTime = DateUtil.getOnlyDateFromTimeStamp(new Date().getTime());
+    }
+    ProductReport productReport = productReportRepository.getByTime(todayTime);
+    if (productReport != null) {
+      return productReport.getValue();
+    }
+    return 0;
   }
 }

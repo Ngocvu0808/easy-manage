@@ -8,5 +8,5 @@ public interface BusinessService {
 
   long checkBalance() throws ResourceNotFoundException;
 
-  JsonNode fund(FundRequestData data);
+  JsonNode fund(String data);
 }

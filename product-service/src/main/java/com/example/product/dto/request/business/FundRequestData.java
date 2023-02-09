@@ -12,4 +12,5 @@ public class FundRequestData {
   private String customer;
   private String type;
   private String batch;
+  private Integer userId;
 }

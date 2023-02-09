@@ -131,13 +131,13 @@ public class UserServiceImpl implements UserService {
       throw new IdentifyBlankException("Email not null",
           ServiceInfo.getId() + AuthServiceMessageCode.EMAIL_NOT_NULL);
     }
-    Optional<User> optional = userRepository.findByUsername(request.getUsername());
-    if (optional.isPresent()) {
+    List<User> optional = userRepository.findByUsername(request.getUsername());
+    if (optional.isEmpty()) {
       throw new DuplicateEntityException("Username already exist",
           ServiceInfo.getId() + AuthServiceMessageCode.USER_ALREADY_EXIST);
     }
-    Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
-    if (userOptional.isPresent()) {
+    List<User> userOptional = userRepository.findByEmail(request.getEmail());
+    if (userOptional.isEmpty()) {
       throw new DuplicateEntityException("Email already exist",
           ServiceInfo.getId() + AuthServiceMessageCode.EMAIL_ALREADY_EXIST);
     }

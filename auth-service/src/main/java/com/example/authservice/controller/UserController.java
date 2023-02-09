@@ -15,7 +15,7 @@ import com.example.authservice.dto.role.RoleDto;
 import com.example.authservice.dto.user.UserDto;
 import com.example.authservice.entities.UserStatus;
 import com.example.authservice.exception.AuthServiceMessageCode;
-import com.example.authservice.utils.auth.AuthGuardService;
+import com.example.authservice.service.iface.AuthGuardService;
 import com.example.authservice.service.iface.AuthService;
 import com.example.authservice.service.iface.UserService;
 import com.example.authservice.utils.ServiceInfo;

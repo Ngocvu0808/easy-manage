@@ -1,6 +1,6 @@
 #CONFIG PORT
 server:
-  port: 9090
+  port: 19090
   max-http-header-size: 1000000
 
 # SPRING CONFIG
@@ -10,6 +10,10 @@ spring:
   data:
     mongodb:
       uri: mongodb://root:root@localhost:27017/admin
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
   #  DATASOURCE MARIADB
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
@@ -26,15 +30,6 @@ spring:
   devtools:
     add-properties: false
 
-  boot:
-    admin:
-      client:
-        url: http://admin-server:9090
-        username: admin
-        password: admin
-      notify:
-        mail:
-          to:
 
 management:
   endpoint:

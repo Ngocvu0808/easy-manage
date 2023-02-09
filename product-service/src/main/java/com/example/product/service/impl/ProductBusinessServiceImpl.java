@@ -51,13 +51,16 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
   @Override
   @Transactional
   public boolean buy(BuyingProductRequest request) throws ResourceNotFoundException {
+    if (request.getUserId() == null || request.getUserId() ==0) {
+      throw new ResourceNotFoundException(ErrorCodeEnum.ID_BLANK);
+    }
     Date date = new Date();
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMddHHmmss");
     String timeAdd = simpleDateFormat.format(date);
     checkProductAvailable(request.getProducts(), FundType.BUYING.name());
     long billValue = getBillValue(request.getProducts());
     buyProduct(request, timeAdd, date);
-    fund(billValue, request.getSource(), FundType.BUYING.name(), timeAdd);
+    fund(billValue, request.getSource(), FundType.BUYING.name(), timeAdd, request.getUserId());
     return true;
   }
 
@@ -130,6 +133,7 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
       Product product = productOptional.get();
       totalBill += product.getBuyPrice() * products.get(productId);
     }
+//    long balance = 9999999999999L;
     long balance = this.getBalance();
     if (totalBill >= balance) {
       throw new ResourceNotFoundException(ErrorCodeEnum.BALANCE_NOT_ENOUGH);
@@ -144,13 +148,17 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
   @Override
   @Transactional
   public boolean sell(SellingProductRequest request) throws ResourceNotFoundException {
+    if (request.getUserId() == null || request.getUserId() ==0) {
+      throw new ResourceNotFoundException(ErrorCodeEnum.ID_BLANK);
+    }
     Date date = new Date();
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMddHHmmss");
     String timeAdd = simpleDateFormat.format(date);
     checkProductAvailable(request.getProducts(), FundType.SELLING.name());
     sellProduct(request.getProducts(), timeAdd);
     long billValue = getBillValue(request.getProducts());
-    fund(billValue, request.getCustomerPhone(), FundType.SELLING.name(), timeAdd);
+    fund(billValue, request.getCustomerPhone(), FundType.SELLING.name(), timeAdd,
+        request.getUserId());
     return false;
   }
 
@@ -208,14 +216,16 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
     tradeHistoryRepository.saveAll(tradeSaveRequest);
   }
 
-  private void fund(long amount, String customer, String type, String batch) {
+  private void fund(long amount, String customer, String type, String batch, int userId) {
     FundRequestData fundData = new FundRequestData();
     fundData.setCustomer(customer);
     fundData.setType(type);
     fundData.setBatch(batch);
     fundData.setAmount(amount);
     fundData.setUuid(UUID.randomUUID().toString());
-    producerService.sendMessage(JsonUtils.toJson(fundData), fundTopic);
+    fundData.setUserId(userId);
+    boolean send = producerService.sendMessage(JsonUtils.toJson(fundData), fundTopic);
+    logger.info("Sending message: {");
   }
 
 

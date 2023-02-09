@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.Specification;
 
 public class ProductFilter extends EntityFilter<Product> {
   public Specification<Product> filter(Set<Integer> ids, String search, String status,
-      Map<String, String> sort, Boolean isDeleted) {
+      Map<String, String> sort) {
     return (root, criteriaQuery, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
       if (search != null && !search.isBlank()) {
@@ -22,7 +22,6 @@ public class ProductFilter extends EntityFilter<Product> {
       if (status != null) {
         predicates.add(criteriaBuilder.equal(root.get("status"), status));
       }
-      predicates.add(criteriaBuilder.equal(root.get("isDeleted"), isDeleted));
       if (ids != null && ids.size() > 0) {
         predicates.add(criteriaBuilder.in(root.get("id")).value(ids));
       }

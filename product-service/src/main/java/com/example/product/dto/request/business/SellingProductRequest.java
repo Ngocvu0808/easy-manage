@@ -13,4 +13,5 @@ public class SellingProductRequest {
   private String source;
   private int amount;
   private String customerPhone;
+  private Integer userId;
 }

@@ -9,7 +9,7 @@ import com.example.authservice.dto.auth.RoleResponseDto;
 import com.example.authservice.dto.role.RoleCustomDto;
 import com.example.authservice.dto.role.RoleDto;
 import com.example.authservice.exception.AuthServiceMessageCode;
-import com.example.authservice.utils.auth.AuthGuardService;
+import com.example.authservice.service.iface.AuthGuardService;
 import com.example.authservice.service.iface.RoleService;
 import com.example.authservice.utils.ServiceInfo;
 import com.example.authservice.utils.SortingUtils;

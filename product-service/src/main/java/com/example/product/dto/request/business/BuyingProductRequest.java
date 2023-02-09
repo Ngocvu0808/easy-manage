@@ -11,4 +11,5 @@ public class BuyingProductRequest {
 
   private Map<Integer, Integer> products;
   private String source;
+  private Integer userId;
 }

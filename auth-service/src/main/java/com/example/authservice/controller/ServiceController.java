@@ -14,7 +14,7 @@ import com.example.authservice.dto.service.ServiceResponseDto;
 import com.example.authservice.dto.tag.TagResponseDto;
 import com.example.authservice.entities.service.ExternalApi;
 import com.example.authservice.exception.AuthServiceMessageCode;
-import com.example.authservice.utils.auth.AuthGuardService;
+import com.example.authservice.service.iface.AuthGuardService;
 import com.example.authservice.service.iface.ServiceService;
 import com.example.authservice.service.iface.SystemService;
 import com.example.authservice.service.iface.TagService;

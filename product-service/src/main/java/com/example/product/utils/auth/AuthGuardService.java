@@ -2,6 +2,7 @@ package com.example.product.utils.auth;
 
 
 import com.example.product.utils.exception.ProxyAuthenticationException;
+import com.example.product.utils.exception.UnAuthorizedException;
 import com.example.product.utils.exception.UserNotFoundException;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -13,7 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface AuthGuardService {
 
   Boolean checkPermission(HttpServletRequest request, Integer objectId, String objectCode,
-      String permissionCode) throws ProxyAuthenticationException;
+      String permissionCode) throws ProxyAuthenticationException, UnAuthorizedException;
 
   Boolean checkPermission(HttpServletRequest request, Integer objectId, String objectCode,
       List<String> permissionCode) throws ProxyAuthenticationException;

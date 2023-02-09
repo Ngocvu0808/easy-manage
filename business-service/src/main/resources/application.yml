@@ -1,0 +1,50 @@
+
+#CONFIG PORT
+server:
+  port: 9093
+  max-http-header-size: 1000000
+
+# SPRING CONFIG
+spring:
+  #  main:
+  #    web-application-type: none
+#  data:
+#    mongodb:
+#      uri: mongodb://root:root@localhost:27017/admin
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    key:
+      balance: total_balance
+  #  DATASOURCE MARIADB
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/mar-platform?createDatabaseIfNotExist=false&autoReconnect=true&UseUnicode=true&characterEncoding=utf8&useSSL=false
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: false
+  devtools:
+    add-properties: false
+
+management:
+  endpoint:
+    web:
+      exposure:
+        include: "*"
+    health:
+      show-details: always
+
+product-service:
+  url: http://172.17.0.1:9091
+  auth-key: MzQ2YTM2NmUtOTg1ZS00MjY4LTgzYzQtY2JkNTYyMjQ3OWNi
+  end-point:
+    revert: /trading/revert
+    get-all-value: /product/all-value
+

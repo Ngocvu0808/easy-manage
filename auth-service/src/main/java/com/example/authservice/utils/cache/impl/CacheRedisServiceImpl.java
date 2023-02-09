@@ -19,10 +19,10 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class CacheRedisServiceImpl implements CacheRedisService {
 
-  private final RedisTemplate<String, Object> template;
+  private final RedisTemplate<Object, Object> template;
 
   @Autowired
-  public CacheRedisServiceImpl(RedisTemplate<String, Object> template) {
+  public CacheRedisServiceImpl(RedisTemplate<Object, Object> template) {
     RedisSerializer<?> redisSerializer = new StringRedisSerializer();
     template.setKeySerializer(redisSerializer);
     template.setValueSerializer(redisSerializer);
@@ -36,7 +36,7 @@ public class CacheRedisServiceImpl implements CacheRedisService {
   }
 
   public Boolean hasKeyPattern(String pattern) {
-    Set<String> keys = this.template.keys(pattern);
+    Set<Object> keys = this.template.keys(pattern);
     return keys != null && !keys.isEmpty();
   }
 
@@ -49,7 +49,7 @@ public class CacheRedisServiceImpl implements CacheRedisService {
   }
 
   public void removePattern(String pattern) {
-    Set<String> keys = this.template.keys(pattern);
+    Set<Object> keys = this.template.keys(pattern);
     if (keys != null && !keys.isEmpty()) {
       this.template.delete(keys);
     }
@@ -57,7 +57,7 @@ public class CacheRedisServiceImpl implements CacheRedisService {
   }
 
   public void setExpirePattern(String pattern, long duration, TimeUnit timeUnit) {
-    Set<String> keys = this.template.keys(pattern);
+    Set<Object> keys = this.template.keys(pattern);
     if (keys != null && !keys.isEmpty()) {
       this.template.delete(keys);
       Iterator var6 = keys.iterator();

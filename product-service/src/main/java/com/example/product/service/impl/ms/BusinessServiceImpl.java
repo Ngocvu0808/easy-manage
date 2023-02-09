@@ -1,5 +1,6 @@
 package com.example.product.service.impl.ms;
 
+import com.example.product.config.Constants;
 import com.example.product.config.ErrorCodeEnum;
 import com.example.product.dto.request.business.FundRequestData;
 import com.example.product.service.iface.ms.BusinessService;
@@ -34,7 +35,8 @@ public class BusinessServiceImpl implements BusinessService {
     HttpResponse<JsonNode> response = Unirest.get(
             businessServiceUrl.concat(businessCheckBalanceEndPoint))
         .header("Content-Type", "application/json")
-        .header("Authorization", businessServiceAuthKey)
+        .header("x-api-key", businessServiceAuthKey)
+        .header("agent", Constants.AGENT)
         .asJson();
     logger.info("response call api VP: {}", response.getBody());
     JsonNode jsonNode = null;
@@ -56,12 +58,13 @@ public class BusinessServiceImpl implements BusinessService {
   }
 
   @Override
-  public JsonNode fund(FundRequestData data) {
+  public JsonNode fund(String data) {
     logger.info("fund() with data: {}", JsonUtils.toJson(data));
     HttpResponse<JsonNode> response = Unirest.post(businessServiceUrl.concat(businessFundEndPoint))
         .header("Content-Type", "application/json")
-        .header("Authorization", businessServiceAuthKey)
-        .body(JsonUtils.toJson(data))
+        .header("x-api-key", businessServiceAuthKey)
+        .header("agent", Constants.AGENT)
+        .body(data)
         .asJson();
     logger.info("response call api VP: {}", response.getBody());
     return response.getBody();
