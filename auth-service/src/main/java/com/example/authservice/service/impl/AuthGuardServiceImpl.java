@@ -1,6 +1,9 @@
 package com.example.authservice.service.impl;
 
+import com.example.authservice.dto.auth.LoginResponseDto;
+import com.example.authservice.service.iface.AuthService;
 import com.example.authservice.utils.exception.ProxyAuthenticationException;
+import com.example.authservice.utils.exception.UnAuthorizedException;
 import com.example.authservice.utils.exception.UserNotFoundException;
 import com.example.authservice.service.iface.AuthGuardService;
 import com.example.authservice.utils.EncodeUtils;
@@ -26,8 +29,9 @@ public class AuthGuardServiceImpl implements AuthGuardService {
 
   private final String MISSING_TOKEN_CODE = "0000";
   private final String BASE_CODE = "00";
-
-  public AuthGuardServiceImpl() {
+  private final AuthService authService;
+  public AuthGuardServiceImpl(AuthService authService) {
+    this.authService = authService;
   }
 
   public Boolean checkPermissionByJwt(String token, Integer objectId, String objectCode,
@@ -89,14 +93,16 @@ public class AuthGuardServiceImpl implements AuthGuardService {
   }
 
   public Boolean checkPermission(HttpServletRequest request, Integer objectId, String objectCode,
-      String permissionCode) throws ProxyAuthenticationException {
-    String token = request.getHeader("Authorization");
+      String permissionCode) throws ProxyAuthenticationException, UnAuthorizedException {
+    LoginResponseDto loginResponseDto = authService.checkAuthenticate(request);
+    String token = loginResponseDto.getJwt();
     return this.checkPermissionByJwt(token, objectId, objectCode, permissionCode);
   }
 
   public Boolean checkPermission(HttpServletRequest request, Integer objectId, String objectCode,
-      List<String> permissionCode) throws ProxyAuthenticationException {
-    String token = request.getHeader("Authorization");
+      List<String> permissionCode) throws ProxyAuthenticationException, UnAuthorizedException {
+    LoginResponseDto loginResponseDto = authService.checkAuthenticate(request);
+    String token = loginResponseDto.getJwt();
     if (token != null && !token.isBlank()) {
       String jwtValue = EncodeUtils.decodeJWT(token);
       if (jwtValue == null) {
@@ -152,8 +158,9 @@ public class AuthGuardServiceImpl implements AuthGuardService {
   }
 
   public Integer getUserId(HttpServletRequest request)
-      throws ProxyAuthenticationException, UserNotFoundException {
-    String token = request.getHeader("Authorization");
+      throws ProxyAuthenticationException, UserNotFoundException, UnAuthorizedException {
+    LoginResponseDto loginResponseDto = authService.checkAuthenticate(request);
+    String token = loginResponseDto.getJwt();
     if (token != null && !token.isBlank()) {
       String jwtValue = EncodeUtils.decodeJWT(token);
       if (jwtValue == null) {
@@ -171,8 +178,10 @@ public class AuthGuardServiceImpl implements AuthGuardService {
     }
   }
 
-  public void checkAuthorization(HttpServletRequest request) throws ProxyAuthenticationException {
-    String token = request.getHeader("Authorization");
+  public void checkAuthorization(HttpServletRequest request)
+      throws ProxyAuthenticationException, UnAuthorizedException {
+    LoginResponseDto loginResponseDto = authService.checkAuthenticate(request);
+    String token = loginResponseDto.getJwt();
     if (token == null || token.isBlank()) {
       throw new ProxyAuthenticationException("Missing token", "000000");
     }

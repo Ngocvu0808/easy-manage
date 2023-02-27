@@ -6,6 +6,7 @@ import com.example.authservice.config.PermissionObjectCode;
 import com.example.authservice.dto.app.RefreshTokenDto;
 import com.example.authservice.dto.auth.ChangePassRequestDto;
 import com.example.authservice.dto.auth.DeleteUserListDto;
+import com.example.authservice.dto.auth.LoginResponseDto;
 import com.example.authservice.dto.auth.RegisterRequestDto;
 import com.example.authservice.dto.auth.UpdateStatusUserListDto;
 import com.example.authservice.dto.filter.UserStatusDto;
@@ -36,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
+@RequestMapping("/auth")
 public class UserController {
 
   private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -584,7 +586,8 @@ public class UserController {
                 .httpCode(HttpStatus.FORBIDDEN.value()).build()
             , HttpStatus.OK);
       }
-      String token = request.getHeader("Authorization");
+      LoginResponseDto loginResponseDto = authService.checkAuthenticate(request);
+      String token = loginResponseDto.getJwt();
       UserDto userDetail = userService.getUserById(token, id);
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(userDetail)

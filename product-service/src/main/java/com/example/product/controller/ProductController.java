@@ -3,6 +3,7 @@ package com.example.product.controller;
 import com.example.product.config.Constants;
 import com.example.product.config.MessageCode;
 import com.example.product.config.PermissionObjectCode;
+import com.example.product.config.PermissionObjectCode.ProductPermissionCode;
 import com.example.product.dto.request.AddProductRequest;
 import com.example.product.dto.request.UpdateProductRequest;
 import com.example.product.dto.response.GetProductResponse;
@@ -55,7 +56,7 @@ public class ProductController {
       @RequestParam(name = "sort", required = false, defaultValue = "") String sort) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          ProductPermissionCode.PRODUCT_LIST)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -86,12 +87,12 @@ public class ProductController {
     }
   }
 
-  @PostMapping("/app")
+  @PostMapping("")
   public ResponseEntity<?> add(HttpServletRequest request,
       @RequestBody AddProductRequest requestDto) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_ADD)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -120,7 +121,7 @@ public class ProductController {
       @PathVariable("id") Integer id) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_DETAIL)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -154,7 +155,7 @@ public class ProductController {
       @PathVariable("id") Integer id) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_DISABLE)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -183,19 +184,20 @@ public class ProductController {
     }
   }
 
-  @PutMapping("")
+  @PutMapping("/{id}")
   public ResponseEntity<?> update(HttpServletRequest request,
+      @PathVariable("id") Integer id,
       @RequestBody UpdateProductRequest requestData) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_UPDATE)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
                 .httpCode(HttpStatus.FORBIDDEN.value()).build()
             , HttpStatus.OK);
       }
-      boolean result = productService.update(requestData);
+      boolean result = productService.update(id, requestData);
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).data(result).message(Constants.SUCCESS_MSG)
               .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()
@@ -223,7 +225,7 @@ public class ProductController {
       @RequestParam(name = "time", required = false, defaultValue = "") Long time) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_ALL_VALUE)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())

@@ -159,7 +159,7 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
     long billValue = getBillValue(request.getProducts());
     fund(billValue, request.getCustomerPhone(), FundType.SELLING.name(), timeAdd,
         request.getUserId());
-    return false;
+    return true;
   }
 
   @Override

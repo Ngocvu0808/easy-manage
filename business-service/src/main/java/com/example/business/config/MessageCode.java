@@ -5,4 +5,5 @@ public interface MessageCode {
   String JWT_INVALID = "0002";
   String IP_INVALID = "0003";
   String CLIENT_API_KEY_INVALID = "0004";
+
 }

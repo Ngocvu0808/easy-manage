@@ -8,7 +8,9 @@ import com.example.authservice.dto.auth.RolePermissionDto;
 import com.example.authservice.dto.auth.RoleResponseDto;
 import com.example.authservice.dto.role.RoleCustomDto;
 import com.example.authservice.dto.role.RoleDto;
+import com.example.authservice.entities.RoleType;
 import com.example.authservice.exception.AuthServiceMessageCode;
+import com.example.authservice.repo.RoleTypeRepository;
 import com.example.authservice.service.iface.AuthGuardService;
 import com.example.authservice.service.iface.RoleService;
 import com.example.authservice.utils.ServiceInfo;
@@ -25,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
+@RequestMapping("/auth")
 public class RoleController {
 
   private static final Logger logger = LoggerFactory.getLogger(RoleController.class);
@@ -33,7 +36,9 @@ public class RoleController {
 
   private final RoleService roleService;
 
-  public RoleController(AuthGuardService authGuard, RoleService roleService) {
+
+  public RoleController(AuthGuardService authGuard, RoleService roleService,
+      RoleTypeRepository roleTypeRepository) {
     this.authGuard = authGuard;
     this.roleService = roleService;
   }
@@ -210,6 +215,40 @@ public class RoleController {
             , HttpStatus.OK);
       }
       List<RoleCustomDto> roles = roleService.getRoleByType(type);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(roles)
+              .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (ProxyAuthenticationException e) {
+      logger.warn(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
+              .errorCode(e.getMessageCode()).httpCode(HttpStatus.UNAUTHORIZED.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
+
+
+  @GetMapping("/role/type/filter")
+  public ResponseEntity<?> getRolesByTypeFilter(HttpServletRequest request) {
+    try {
+      if (!authGuard
+          .checkPermission(request, null, PermissionObjectCode.ROLE,
+              PermissionObjectCode.RoleServicePermissionCode.ROLE_GET_BY_TYPE)) {
+        return new ResponseEntity<>(
+            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+            , HttpStatus.OK);
+      }
+      List<RoleType> roles = roleService.getRoleType();
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(roles)
               .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()

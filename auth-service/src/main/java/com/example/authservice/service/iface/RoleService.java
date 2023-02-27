@@ -4,6 +4,7 @@ package com.example.authservice.service.iface;
 import com.example.authservice.dto.auth.*;
 import com.example.authservice.dto.role.RoleCustomDto;
 import com.example.authservice.dto.role.RoleDto;
+import com.example.authservice.entities.RoleType;
 import com.example.authservice.utils.exception.DuplicateEntityException;
 import com.example.authservice.utils.exception.IdentifyBlankException;
 import com.example.authservice.utils.exception.OperationNotImplementException;
@@ -46,4 +47,6 @@ public interface RoleService {
   List<RolePermissionDto> findListPermission(List<Integer> roleIds, List<String> objectCodes);
 
   List<RoleDto> findListRoleByListObjectCode(String objectCodeList);
+
+  List<RoleType> getRoleType();
 }

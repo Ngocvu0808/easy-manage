@@ -4,6 +4,7 @@ import com.example.authservice.entities.UserActivity;
 import com.example.authservice.entities.enums.UserActivityType;
 import com.example.authservice.repo.UserActivityRepository;
 import com.example.authservice.utils.JsonUtils;
+import com.example.authservice.utils.Utils;
 import com.google.gson.JsonObject;
 import java.util.Arrays;
 import java.util.Date;
@@ -55,7 +56,8 @@ public class MessagePublisherImpl implements MessagePublisher {
             activity.setCreateTime(time_log);
             activity.setToken(userActivity.getToken());
             activity.setUserId(userActivity.getUserId());
-            activity.setIPAddress(null);
+            activity.setIPAddress(Utils.getIPAddr());
+            activity.setSessionId(userActivity.getSessionId());
             userActivityRepository.save(activity);
           }
 

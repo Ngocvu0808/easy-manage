@@ -1,5 +1,7 @@
 package com.example.authservice.utils.permission;
 
+import com.example.authservice.dto.auth.LoginResponseDto;
+import com.example.authservice.service.impl.AuthServiceImpl;
 import com.example.authservice.utils.exception.ProxyAuthenticationException;
 import com.example.authservice.utils.EncodeUtils;
 import com.google.gson.Gson;
@@ -8,6 +10,8 @@ import org.json.JSONObject;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.SpringCacheAnnotationParser;
+import org.springframework.jca.context.SpringContextResourceAdapter;
 
 /**
  * @author nguyen
@@ -35,7 +39,7 @@ public class PermissionUtils {
   private static void checkMissingAuthHeader(HttpServletRequest request)
       throws ProxyAuthenticationException {
     Set<String> headers = new HashSet(Collections.list(request.getHeaderNames()));
-    if (!headers.contains("Authorization".toLowerCase(Locale.ROOT))) {
+    if (!headers.contains("token".toLowerCase(Locale.ROOT))) {
       throw new ProxyAuthenticationException("Missing token", "000000");
     }
   }

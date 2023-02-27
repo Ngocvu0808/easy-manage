@@ -3,6 +3,7 @@ package com.example.product.controller;
 import com.example.product.config.Constants;
 import com.example.product.config.MessageCode;
 import com.example.product.config.PermissionObjectCode;
+import com.example.product.config.PermissionObjectCode.ProductPermissionCode;
 import com.example.product.dto.request.business.BuyingProductRequest;
 import com.example.product.dto.request.business.RevertRequestData;
 import com.example.product.dto.request.business.SellingProductRequest;
@@ -52,7 +53,7 @@ public class TradingController {
       @RequestParam(name = "sort", required = false, defaultValue = "") String sort) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_TRADING_ALL)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -87,7 +88,7 @@ public class TradingController {
       @RequestParam(name = "batch", required = true, defaultValue = "") String batch) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_GET_BY_BATCH)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -117,7 +118,7 @@ public class TradingController {
       @RequestBody SellingProductRequest data) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_SELLING)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
@@ -153,7 +154,7 @@ public class TradingController {
       @RequestBody BuyingProductRequest data) {
     try {
       if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+          ProductPermissionCode.PRODUCT_BUYING)) {
         return new ResponseEntity<>(
             BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
                 .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())

@@ -385,4 +385,9 @@ public class RoleServiceImpl implements RoleService {
     List<Role> roleList = roleRepository.findAllByIsDeletedFalseAndIdIn(ids);
     return roleList.stream().map(roleMapper::toDto).collect(Collectors.toList());
   }
+
+  @Override
+  public List<RoleType> getRoleType() {
+    return roleTypeRepository.findAll();
+  }
 }

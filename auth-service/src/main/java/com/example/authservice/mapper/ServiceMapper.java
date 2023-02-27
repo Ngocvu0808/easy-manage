@@ -32,23 +32,23 @@ public abstract class ServiceMapper {
   @Mapping(target = "creatorName", source = "creatorUser.username")
   public abstract ServiceResponseDto toServiceResponseDto(Service service);
 
-  @AfterMapping
-  public void afterMapping(@MappingTarget ServiceResponseDto serviceResponseDto, Service service) {
-    Set<String> tags = new HashSet<>();
-    List<ServiceTag> serviceTags = service.getServiceTags();
-    if (serviceTags != null) {
-      List<ServiceTag> listServiceTagFilter = serviceTags.stream()
-          .filter(serviceTag -> !serviceTag.getIsDeleted()).collect(Collectors.toList());
-
-      listServiceTagFilter.forEach(serviceTag -> {
-        Tag tag = serviceTag.getTag();
-        if (tag != null) {
-          tags.add(tag.getTag());
-        }
-      });
-    }
-    serviceResponseDto.setTags(tags);
-  }
+//  @AfterMapping
+//  public void afterMapping(@MappingTarget ServiceResponseDto serviceResponseDto, Service service) {
+//    Set<String> tags = new HashSet<>();
+//    List<ServiceTag> serviceTags = service.getServiceTags();
+//    if (serviceTags != null) {
+//      List<ServiceTag> listServiceTagFilter = serviceTags.stream()
+//          .filter(serviceTag -> (serviceTag.getIsDeleted() != null || !serviceTag.getIsDeleted())).collect(Collectors.toList());
+//
+//      listServiceTagFilter.forEach(serviceTag -> {
+//        Tag tag = serviceTag.getTag();
+//        if (tag != null) {
+//          tags.add(tag.getTag());
+//        }
+//      });
+//    }
+//    serviceResponseDto.setTags(tags);
+//  }
 
 
   @Mapping(target = "code", source = "code", ignore = true)

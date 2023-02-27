@@ -1,6 +1,8 @@
 package com.example.authservice.utils;
 
 
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -60,5 +62,14 @@ public class Utils {
       reader.close();
     }
     return builder.toString();
+  }
+
+  public static String getIPAddr() {
+    try(final DatagramSocket socket = new DatagramSocket()){
+      socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+      return socket.getLocalAddress().getHostAddress();
+    } catch (Exception e) {
+      return null;
+    }
   }
 }

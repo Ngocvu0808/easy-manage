@@ -14,5 +14,6 @@ public interface RoleTypeRepository extends JpaRepository<RoleType, Integer> {
 
   Optional<RoleType> findByCode(String code);
 
+
   List<RoleType> findAllByCodeInAndIsDeletedFalse(List<String> types);
 }

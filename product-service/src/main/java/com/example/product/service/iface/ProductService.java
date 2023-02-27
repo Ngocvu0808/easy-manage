@@ -18,7 +18,7 @@ public interface ProductService {
 
   GetProductResponse findOne(int id) throws ResourceNotFoundException;
 
-  boolean update(UpdateProductRequest request) throws ResourceNotFoundException;
+  boolean update(int id, UpdateProductRequest request) throws ResourceNotFoundException;
 
   long getAllValueProduct(long time) throws ParseException;
 

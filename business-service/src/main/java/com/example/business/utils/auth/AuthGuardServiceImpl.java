@@ -1,12 +1,15 @@
 package com.example.business.utils.auth;
 
+import com.example.business.config.AuthServiceMessageCode;
 import com.example.business.config.Constants;
 import com.example.business.config.MessageCode;
+import com.example.business.dto.response.LoginResponseDto;
 import com.example.business.utils.EncodeUtils;
 import com.example.business.utils.JsonUtils;
 import com.example.business.utils.KeyConstants;
 import com.example.business.utils.KeyConstants.Headers;
 import com.example.business.utils.KeyConstants.RedisKey;
+import com.example.business.utils.RequestUtils;
 import com.example.business.utils.ServiceInfo;
 import com.example.business.utils.cache.CacheRedisService;
 import com.example.business.utils.exception.ProxyAuthenticationException;
@@ -18,14 +21,17 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,6 +46,11 @@ public class AuthGuardServiceImpl implements AuthGuardService {
   private final String MISSING_TOKEN_CODE = "0000";
   private final String BASE_CODE = "00";
   private final CacheRedisService redisService;
+
+  @Value("${auth.code.prefix:auth:jwt:}")
+  private String prefix;
+  @Value("${auth.code.expire-time:1800}")
+  private Long expireToken;
   public AuthGuardServiceImpl(CacheRedisService redisService) {
     this.redisService = redisService;
   }
@@ -104,10 +115,7 @@ public class AuthGuardServiceImpl implements AuthGuardService {
 
   public Boolean checkPermission(HttpServletRequest request, Integer objectId, String objectCode,
       String permissionCode) throws ProxyAuthenticationException, UnAuthorizedException {
-    String token = request.getHeader("Authorization");
-    if (token != null && !token.isEmpty()) {
-      return this.checkPermissionByJwt(token, objectId, objectCode, permissionCode);
-    }
+    String token = "";
     String apiKey = request.getHeader(Headers.X_API_KEY);
     if (apiKey != null && !apiKey.isEmpty()) {
       Map<String, String> res = this.getJwtOfApiKey(apiKey);
@@ -141,9 +149,13 @@ public class AuthGuardServiceImpl implements AuthGuardService {
               ServiceInfo.getId() + MessageCode.IP_INVALID);
         }
       }
+    } else {
+      LoginResponseDto loginResponseDto = checkAuthenticate(request);
+      token = loginResponseDto.getJwt();
     }
     return this.checkPermissionByJwt(token, objectId, objectCode, permissionCode);
   }
+
   Map<String, String> getJwtOfApiKey(String apiKey) {
     Map<String, String> map = new HashMap<>();
     String key = KeyConstants.RedisKey.AUTH_APP.concat(apiKey);
@@ -157,8 +169,9 @@ public class AuthGuardServiceImpl implements AuthGuardService {
     return map;
   }
   public Boolean checkPermission(HttpServletRequest request, Integer objectId, String objectCode,
-      List<String> permissionCode) throws ProxyAuthenticationException {
-    String token = request.getHeader("Authorization");
+      List<String> permissionCode) throws ProxyAuthenticationException, UnAuthorizedException {
+    LoginResponseDto loginResponseDto = checkAuthenticate(request);
+    String token = loginResponseDto.getJwt();
     if (token != null && !token.isBlank()) {
       String jwtValue = EncodeUtils.decodeJWT(token);
       if (jwtValue == null) {
@@ -214,8 +227,9 @@ public class AuthGuardServiceImpl implements AuthGuardService {
   }
 
   public Integer getUserId(HttpServletRequest request)
-      throws ProxyAuthenticationException, UserNotFoundException {
-    String token = request.getHeader("Authorization");
+      throws ProxyAuthenticationException, UserNotFoundException, UnAuthorizedException {
+    LoginResponseDto loginResponseDto = checkAuthenticate(request);
+    String token = loginResponseDto.getJwt();
     if (token != null && !token.isBlank()) {
       String jwtValue = EncodeUtils.decodeJWT(token);
       if (jwtValue == null) {
@@ -233,10 +247,59 @@ public class AuthGuardServiceImpl implements AuthGuardService {
     }
   }
 
-  public void checkAuthorization(HttpServletRequest request) throws ProxyAuthenticationException {
-    String token = request.getHeader("Authorization");
+  public void checkAuthorization(HttpServletRequest request)
+      throws ProxyAuthenticationException, UnAuthorizedException {
+    LoginResponseDto loginResponseDto = checkAuthenticate(request);
+    String token = loginResponseDto.getJwt();
     if (token == null || token.isBlank()) {
       throw new ProxyAuthenticationException("Missing token", "000000");
     }
+  }
+
+  public LoginResponseDto checkAuthenticate(HttpServletRequest request)
+      throws UnAuthorizedException {
+    //check public api flow
+    // Check access token flow
+    logger.info("headers: {}", JsonUtils.toJson(RequestUtils.getRequestHeadersInMap(request)));
+
+    // basic token base flow
+    String token = request.getHeader(Headers.TOKEN);
+    if (token == null || token.isBlank()) {
+      throw new UnAuthorizedException("token is null or empty",
+          ServiceInfo.getId() + AuthServiceMessageCode.TOKEN_NULL);
+    }
+    String pattern = "*:" + token;
+    if (!redisService.hasKeyPattern(pattern)) {
+      throw new UnAuthorizedException("token not found",
+          ServiceInfo.getId() + AuthServiceMessageCode.TOKEN_NOT_FOUND);
+    }
+    Set<Object> keys = redisService.keys(pattern);
+    Iterator<?> iter = keys.iterator();
+    Object firstKey = iter.next();
+    String keyCheck = firstKey.toString().replaceAll("\\[|\\]","");
+    String jwtValue = redisService.getValue(keyCheck).toString();
+    if (jwtValue == null || jwtValue.isBlank()) {
+      throw new UnAuthorizedException("jwt is null or empty",
+          ServiceInfo.getId() + AuthServiceMessageCode.JWT_NOT_FOUND);
+    }
+    String jwtBody = EncodeUtils.decodeJWT(jwtValue);
+    if (jwtBody == null || jwtBody.isBlank()) {
+      logger.error("error when decode jwt");
+      throw new UnAuthorizedException("jwt invalid",
+          ServiceInfo.getId() + AuthServiceMessageCode.JWT_INVALID);
+    }
+    JSONObject dataJson = new JSONObject(jwtBody);
+    String userUuid = dataJson.get(KeyConstants.JSONKey.SUB).toString();
+
+    String redisKey = prefix + userUuid + ":" + token;
+
+    String jwtOrg = (String) redisService.getValue(redisKey);
+
+    // update expireTime
+    redisService.setExpireTime(redisKey, expireToken, TimeUnit.SECONDS);
+    LoginResponseDto responseDto = new LoginResponseDto();
+    responseDto.setToken(token);
+    responseDto.setJwt(jwtOrg);
+    return responseDto;
   }
 }

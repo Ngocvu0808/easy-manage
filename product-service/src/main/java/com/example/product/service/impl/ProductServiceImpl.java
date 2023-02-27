@@ -102,11 +102,11 @@ public class ProductServiceImpl implements ProductService {
   }
 
   @Override
-  public boolean update(UpdateProductRequest request) throws ResourceNotFoundException {
-    if (request.getId() == 0) {
+  public boolean update(int id, UpdateProductRequest request) throws ResourceNotFoundException {
+    if (id == 0) {
       throw new ResourceNotFoundException(ErrorCodeEnum.ID_BLANK);
     }
-    Optional<Product> products = productRepository.findById(request.getId());
+    Optional<Product> products = productRepository.findById(id);
     if (products.isEmpty()) {
       throw new ResourceNotFoundException(ErrorCodeEnum.PRODUCT_NOT_FOUND);
     }

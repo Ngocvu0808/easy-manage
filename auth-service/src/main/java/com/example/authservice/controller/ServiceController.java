@@ -31,6 +31,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequestMapping("/auth")
 public class ServiceController {
 
   private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory

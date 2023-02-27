@@ -39,6 +39,20 @@ public interface PermissionObjectCode {
     String GROUP_GET_ALL_ROLE = "GROUP_GET_ALL_ROLE";
   }
 
+  interface ProductPermissionCode{
+    String PRODUCT_TRADING_ALL = "PRODUCT_TRADING_ALL";
+    String PRODUCT_LIST = "PRODUCT_LIST";
+    String PRODUCT_ADD = "PRODUCT_ADD";
+    String PRODUCT_DETAIL = "PRODUCT_DETAIL";
+    String PRODUCT_DISABLE = "PRODUCT_DISABLE";
+    String PRODUCT_UPDATE = "PRODUCT_UPDATE";
+    String PRODUCT_ALL_VALUE = "PRODUCT_ALL_VALUE";
+    String PRODUCT_GET_BY_BATCH = "PRODUCT_GET_BY_BATCH";
+    String PRODUCT_SELLING = "PRODUCT_SELLING";
+    String PRODUCT_BUYING = "PRODUCT_BUYING";
+
+  }
+
   interface UserServicePermissionCode {
 
     String USER_ADD = "USER_ADD";

@@ -9,6 +9,7 @@ import com.example.authservice.dto.auth.GuestAccessRequestDto;
 import com.example.authservice.dto.auth.GuestAccessResponseDto;
 import com.example.authservice.dto.auth.LoginRequestDto;
 import com.example.authservice.dto.auth.LoginResponseDto;
+import com.example.authservice.entities.UserActivity;
 import com.example.authservice.entities.UserStatus;
 import com.example.authservice.entities.application.*;
 import com.example.authservice.entities.enums.*;
@@ -27,13 +28,14 @@ import com.example.authservice.service.iface.CryptoService;
 import com.example.authservice.service.iface.UserService;
 import com.example.authservice.utils.*;
 import com.example.authservice.utils.KeyConstants.Headers;
-import com.example.authservice.utils.KeyConstants.JSONKey;
 import com.example.authservice.utils.KeyConstants.RedisKey;
 import com.example.authservice.utils.cache.CacheRedisService;
 import com.example.authservice.utils.exception.*;
 import com.example.authservice.utils.permission.Permission;
 import com.example.authservice.utils.response.DataPagingResponse;
 import com.google.gson.Gson;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +81,7 @@ public class AuthServiceImpl implements AuthService {
   private final ClientMapper clientMapper;
   private final ClientApiRepository clientApiRepository;
   private final ClientApiKeyRepository clientApiKeyRepository;
+  private final UserActivityRepository userActivityRepository;
 
   @Value("${auth.code.prefix:auth:jwt:}")
   private String prefix;
@@ -118,7 +121,7 @@ public class AuthServiceImpl implements AuthService {
       RefreshTokenMapper refreshTokenMapper,
       ClientMapper clientMapper,
       ClientApiRepository clientApiRepository,
-      ClientApiKeyRepository clientApiKeyRepository) {
+      ClientApiKeyRepository clientApiKeyRepository, UserActivityRepository userActivityRepository) {
     this.redisService = redisService;
     this.userService = userService;
     this.cryptoService = cryptoService;
@@ -136,6 +139,7 @@ public class AuthServiceImpl implements AuthService {
     this.clientMapper = clientMapper;
     this.clientApiRepository = clientApiRepository;
     this.clientApiKeyRepository = clientApiKeyRepository;
+    this.userActivityRepository = userActivityRepository;
   }
 
   @Override
@@ -197,6 +201,15 @@ public class AuthServiceImpl implements AuthService {
     redisService.setValue(prefix + user.getUuid() + ':' + code, jwtEncode, expireToken);
     LoginResponseDto responseDto = new LoginResponseDto();
     responseDto.setToken(code);
+
+    UserActivity userActivity = new UserActivity();
+    userActivity.setUserId(user.getId());
+    userActivity.setActivity("LOGIN");
+    userActivity.setIPAddress(Utils.getIPAddr());
+    userActivity.setSessionId(String.valueOf(new Date().getTime()));
+    userActivity.setCreateTime(new Date());
+    userActivity.setToken(code);
+    userActivityRepository.save(userActivity);
     return responseDto;
 
   }
@@ -231,7 +244,7 @@ public class AuthServiceImpl implements AuthService {
     // Check access token flow
     logger.info("headers: {}", JsonUtils.toJson(RequestUtils.getRequestHeadersInMap(request)));
 
-    // check api_key flow
+    // check api_key flow9
     String apiKey = request.getHeader(Headers.X_API_KEY);
     if (apiKey != null && !apiKey.isEmpty()) {
       Map<String, String> res = this.getJwtOfApiKey(apiKey);
@@ -421,6 +434,17 @@ public class AuthServiceImpl implements AuthService {
 
       redisService.removePattern(prefix + userUuid + ":*");
     }
+
+    List<UserActivity> userActivities = userActivityRepository.findByToken(token);
+    UserActivity userActivityFound = userActivities.get(userActivities.size()-1);
+    UserActivity userActivity = new UserActivity();
+    userActivity.setUserId(userActivityFound.getUserId());
+    userActivity.setActivity("LOGOUT");
+    userActivity.setIPAddress(Utils.getIPAddr());
+    userActivity.setSessionId(userActivityFound.getSessionId());
+    userActivity.setCreateTime(new Date());
+    userActivity.setToken(token);
+    userActivityRepository.save(userActivity);
     request.logout();
   }
 
