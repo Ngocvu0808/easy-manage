@@ -1,5 +1,6 @@
 package com.example.product.dto.request.business;
 
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,9 +10,8 @@ import java.util.Map;
 @Setter
 public class SellingProductRequest {
 
-  private Map<Integer, Integer> products;
+  private List<RequestData> products;
   private String source;
-  private int amount;
   private String customerPhone;
   private Integer userId;
 }

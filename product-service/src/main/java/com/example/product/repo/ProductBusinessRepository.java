@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductBusinessRepository extends JpaRepository<BusinessProduct, Integer> {
 
-  List<BusinessProduct> findAllByProductIdOrderByInDateAsc(int productId);
+  List<BusinessProduct> findAllByProductIdAndAvailableIsNotOrderByInDateAsc(int productId, int available);
 
   List<BusinessProduct> findAllByProductId(int productId);
   List<BusinessProduct> findAllByProductIdIn(Collection<Integer> productIds);

@@ -44,11 +44,13 @@ public class TradingController {
     this.businessService = businessService;
   }
 
-  @GetMapping("/")
+  @GetMapping("")
   public ResponseEntity<?> getAll(HttpServletRequest request,
       @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
       @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
       @RequestParam(name = "search", required = false, defaultValue = "") String search,
+      @RequestParam(name = "startDate", required = false) String startDate,
+      @RequestParam(name = "endDate", required = false) String endDate,
       @RequestParam(name = "status", required = false) String status,
       @RequestParam(name = "sort", required = false, defaultValue = "") String sort) {
     try {
@@ -68,7 +70,7 @@ public class TradingController {
             , HttpStatus.OK);
       }
       DataPagingResponse<TradeHistory> data = tradeHistoryService
-          .findAll(page, limit, search, status, sort);
+          .findAll(page, limit, search, status, sort, startDate, endDate);
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).data(data)
               .message(Constants.SUCCESS_MSG).errorCode(HttpStatus.OK.name().toLowerCase())

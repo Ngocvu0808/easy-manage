@@ -1,6 +1,6 @@
 #CONFIG PORT
 server:
-  port: 9090
+  port: 19090
   max-http-header-size: 1000000
 
 # SPRING CONFIG

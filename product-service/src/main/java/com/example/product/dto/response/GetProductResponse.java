@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class GetProductResponse {
-
+  private int id;
   private String code;
   private String name;
   private String type;

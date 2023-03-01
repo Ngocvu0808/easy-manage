@@ -84,7 +84,11 @@ public class ProductServiceImpl implements ProductService {
       throw new ResourceNotFoundException(ErrorCodeEnum.PRODUCT_NOT_FOUND);
     }
     Product product = products.get();
-    product.setStatus(ProductStatus.DEACTIVATE.name());
+    if (product.getStatus().equals(ProductStatus.DEACTIVATE.name())) {
+      product.setStatus(ProductStatus.ACTIVE.name());
+    }
+    else
+      product.setStatus(ProductStatus.DEACTIVATE.name());
     productRepository.save(product);
     return true;
   }
@@ -127,5 +131,17 @@ public class ProductServiceImpl implements ProductService {
       return productReport.getValue();
     }
     return 0;
+  }
+
+  @Override
+  public List<Product> findByIdIn(String ids) {
+    List<Integer> idList = new ArrayList<>();
+    String [] idSplit = ids.trim().split(",");
+    for (String each : idSplit) {
+      if (!each.equals("undefined")) {
+        idList.add(Integer.parseInt(each.trim()));
+      }
+    }
+    return productRepository.findAllByIdIn(idList);
   }
 }

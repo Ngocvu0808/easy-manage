@@ -26,6 +26,10 @@ public class TradeHistory {
   private long createDate;
   @Column(name = "product_id")
   private int productId;
+  @Column(name = "product_name")
+  private String productName;
+  @Column(name = "product_code")
+  private String productCode;
   @Column(name = "amount")
   private int amount;
   @Column(name = "type")

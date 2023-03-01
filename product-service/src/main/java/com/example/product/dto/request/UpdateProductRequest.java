@@ -7,8 +7,6 @@ import lombok.Setter;
 @Setter
 public class UpdateProductRequest {
 
-  private int id;
-  private String code;
   private String name;
   private String type;
   private Long buyPrice;

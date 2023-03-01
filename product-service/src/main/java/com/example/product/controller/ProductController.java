@@ -7,6 +7,7 @@ import com.example.product.config.PermissionObjectCode.ProductPermissionCode;
 import com.example.product.dto.request.AddProductRequest;
 import com.example.product.dto.request.UpdateProductRequest;
 import com.example.product.dto.response.GetProductResponse;
+import com.example.product.entity.Product;
 import com.example.product.service.iface.ProductService;
 import com.example.product.utils.DateUtil;
 import com.example.product.utils.ServiceInfo;
@@ -21,6 +22,7 @@ import com.example.product.utils.response.GetMethodResponse;
 import com.example.product.utils.response.PostMethodResponse;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -99,7 +101,6 @@ public class ProductController {
                 .httpCode(HttpStatus.FORBIDDEN.value()).build()
             , HttpStatus.OK);
       }
-      Integer userId = authGuard.getUserId(request);
       int result = productService.add(requestDto);
       return new ResponseEntity<>(
           PostMethodResponse.builder().status(true).id(result)
@@ -150,6 +151,33 @@ public class ProductController {
     }
   }
 
+
+  @GetMapping("/batch")
+  public ResponseEntity<?> findByIdIn(HttpServletRequest request,
+      @RequestParam("ids") String ids) {
+    try {
+      if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+          PermissionObjectCode.ProductPermissionCode.PRODUCT_DETAIL)) {
+        return new ResponseEntity<>(
+            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+            , HttpStatus.OK);
+      }
+      List<Product> result = productService.findByIdIn(ids);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).data(result).message(Constants.SUCCESS_MSG)
+              .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
   @PutMapping("/disable/{id}")
   public ResponseEntity<?> disable(HttpServletRequest request,
       @PathVariable("id") Integer id) {

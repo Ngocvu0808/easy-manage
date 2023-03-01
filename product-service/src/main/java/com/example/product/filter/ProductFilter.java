@@ -17,7 +17,10 @@ public class ProductFilter extends EntityFilter<Product> {
       List<Predicate> predicates = new ArrayList<>();
       if (search != null && !search.isBlank()) {
         String searchValue = "%" + search.toLowerCase() + "%";
-        predicates.add(criteriaBuilder.like(root.get("name"), searchValue));
+        Predicate batch = criteriaBuilder.like(root.get("name"), searchValue.trim());
+        Predicate code = criteriaBuilder.like(root.get("code"), searchValue.trim());
+        Predicate type = criteriaBuilder.like(root.get("type"), searchValue.trim());
+        predicates.add(criteriaBuilder.or(batch, code, type));
       }
       if (status != null) {
         predicates.add(criteriaBuilder.equal(root.get("status"), status));

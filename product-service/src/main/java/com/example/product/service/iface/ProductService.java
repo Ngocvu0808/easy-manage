@@ -3,9 +3,11 @@ package com.example.product.service.iface;
 import com.example.product.dto.request.AddProductRequest;
 import com.example.product.dto.request.UpdateProductRequest;
 import com.example.product.dto.response.GetProductResponse;
+import com.example.product.entity.Product;
 import com.example.product.utils.exception.ResourceNotFoundException;
 import com.example.product.utils.response.DataPagingResponse;
 import java.text.ParseException;
+import java.util.List;
 
 public interface ProductService {
 
@@ -22,4 +24,6 @@ public interface ProductService {
 
   long getAllValueProduct(long time) throws ParseException;
 
+
+  List<Product> findByIdIn(String ids);
 }
