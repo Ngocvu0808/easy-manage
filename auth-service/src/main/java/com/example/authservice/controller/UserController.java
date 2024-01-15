@@ -3,6 +3,7 @@ package com.example.authservice.controller;
 
 import com.example.authservice.config.Constants;
 import com.example.authservice.config.PermissionObjectCode;
+import com.example.authservice.config.PermissionObjectCode.RoleCode;
 import com.example.authservice.dto.app.RefreshTokenDto;
 import com.example.authservice.dto.auth.ChangePassRequestDto;
 import com.example.authservice.dto.auth.DeleteUserListDto;
@@ -13,6 +14,10 @@ import com.example.authservice.dto.filter.UserStatusDto;
 import com.example.authservice.dto.group.GroupAndUserDto;
 import com.example.authservice.dto.role.RoleCustomDto;
 import com.example.authservice.dto.role.RoleDto;
+import com.example.authservice.dto.user.GetCustomerResponse;
+import com.example.authservice.dto.user.RegisterCustomerRequest;
+import com.example.authservice.dto.user.UpdateCustomerRequest;
+import com.example.authservice.dto.user.UserActivityResponse;
 import com.example.authservice.dto.user.UserDto;
 import com.example.authservice.entities.UserStatus;
 import com.example.authservice.exception.AuthServiceMessageCode;
@@ -1235,4 +1240,144 @@ public class UserController {
           , HttpStatus.OK);
     }
   }
+
+  @GetMapping("/user-session")
+  public ResponseEntity<?> userSession(HttpServletRequest request,
+      @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+      @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+      @RequestParam(name = "search", required = false, defaultValue = "") String search,
+      @RequestParam(name = "startDate", required = false) String startDate,
+      @RequestParam(name = "endDate", required = false) String endDate,
+      @RequestParam(name = "status", required = false) String status,
+      @RequestParam(name = "sort", required = false, defaultValue = "") String sort) {
+
+    try {
+      if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+          Arrays.asList(PermissionObjectCode.UserServicePermissionCode.USER_GET_ALL_TOKEN,
+              PermissionObjectCode.UserServicePermissionCode.DEVELOPER))) {
+        return new ResponseEntity<>(
+            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+            , HttpStatus.OK);
+      }
+      if (!SortingUtils.validateSort(sort, RefreshTokenDto.class)) {
+        return new ResponseEntity<>(
+            BaseMethodResponse.builder().status(false).message(Constants.SORTING_INVALID)
+                .errorCode(HttpStatus.BAD_REQUEST.name().toLowerCase())
+                .httpCode(HttpStatus.BAD_REQUEST.value()).build()
+            , HttpStatus.OK);
+      }
+      DataPagingResponse<UserActivityResponse> result = userService
+          .getAllUserSession(page, limit, status, search, sort, startDate, endDate);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(result)
+              .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (ProxyAuthenticationException e) {
+      logger.warn(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
+              .errorCode(e.getMessageCode()).httpCode(HttpStatus.UNAUTHORIZED.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
+
+  @GetMapping("/customer/{id}")
+  public ResponseEntity<?> customer(HttpServletRequest request, @PathVariable("id") int id) {
+    try {
+//      if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+//          Arrays.asList(PermissionObjectCode.UserServicePermissionCode.USER_GET_ALL_TOKEN,
+//              RoleCode.CUSTOMER))) {
+//        return new ResponseEntity<>(
+//            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+//                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+//                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+//            , HttpStatus.OK);
+//      }
+      GetCustomerResponse result = userService.getCustomer(id);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(result)
+              .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+//    } catch (ProxyAuthenticationException e) {
+//      logger.warn(e.getMessage());
+//      return new ResponseEntity<>(
+//          BaseMethodResponse.builder().status(false).message(e.getMessage())
+//              .errorCode(e.getMessageCode()).httpCode(HttpStatus.UNAUTHORIZED.value()).build()
+//          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
+
+  @PostMapping("/customer")
+  public ResponseEntity<?> customer(HttpServletRequest request, @RequestBody RegisterCustomerRequest requestData) {
+    try {
+      int result = userService.addCustomer(requestData);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(result)
+              .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+  } catch (Exception e) {
+    logger.error(e.getMessage());
+    return new ResponseEntity<>(
+        BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+            .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+            .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+        , HttpStatus.OK);
+  }
+  }
+
+  @GetMapping("customer")
+  public ResponseEntity<?> customer(HttpServletRequest request,
+      @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
+      @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
+      @RequestParam(name = "search", required = false, defaultValue = "") String search) {
+    try {
+      DataPagingResponse<GetCustomerResponse>  result = userService.getCustomerList(page, limit, search);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(result)
+              .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
+  @PutMapping("/customer/{id}")
+  public ResponseEntity<?> customer(@PathVariable("id") Integer id,
+      @RequestBody UpdateCustomerRequest requestData) {
+    try {
+      int result = userService.updateCustomer(requestData, id);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(result)
+              .errorCode(HttpStatus.OK.name().toLowerCase()).httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
+
 }

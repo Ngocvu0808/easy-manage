@@ -11,7 +11,7 @@ import java.util.Map;
 public class SellingProductRequest {
 
   private List<RequestData> products;
-  private String source;
   private String customerPhone;
   private Integer userId;
+  private String type;
 }

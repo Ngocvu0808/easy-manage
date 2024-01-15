@@ -11,10 +11,11 @@ import java.util.List;
 
 public interface ProductService {
 
-  int add(AddProductRequest addProductRequest);
+  int add(AddProductRequest addProductRequest) throws ResourceNotFoundException;
 
   DataPagingResponse<GetProductResponse> getAll(Integer page, Integer limit, String search,
       String status, String sort);
+  List<GetProductResponse> search(String search);
 
   boolean delete(int id) throws ResourceNotFoundException;
 
@@ -23,6 +24,7 @@ public interface ProductService {
   boolean update(int id, UpdateProductRequest request) throws ResourceNotFoundException;
 
   long getAllValueProduct(long time) throws ParseException;
+  List<Long> getListValueProduct(String times ) throws ParseException;
 
 
   List<Product> findByIdIn(String ids);

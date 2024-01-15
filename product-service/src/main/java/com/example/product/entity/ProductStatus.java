@@ -2,7 +2,7 @@ package com.example.product.entity;
 
 public enum ProductStatus {
   ACTIVE(0),
-  DEACTIVATE(1);
+  DEACTIVE(1);
 
   private final Integer value;
 

@@ -37,4 +37,6 @@ public class Product {
 
   @Column(name = "status")
   private String status;
+  @Column(name = "link")
+  private String link;
 }

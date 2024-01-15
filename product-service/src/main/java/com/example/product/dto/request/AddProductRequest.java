@@ -10,4 +10,6 @@ public class AddProductRequest {
   private String name;
   private String type;
   private long buyPrice;
+  private long sellPrice;
+  private String link;
 }

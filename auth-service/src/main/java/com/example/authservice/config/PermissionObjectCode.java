@@ -22,6 +22,9 @@ public interface PermissionObjectCode {
     String ROLE_GET_BY_TYPE = "ROLE_GET_BY_TYPE";
   }
 
+  interface RoleCode {
+    String CUSTOMER = "CUSTOMER";
+  }
   interface GroupServicePermissionCode {
 
     String GROUP_ADD = "GROUP_ADD";

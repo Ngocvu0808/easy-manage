@@ -93,6 +93,34 @@ public class BusinessController {
     }
   }
 
+  @GetMapping("/get-list-balance")
+  public ResponseEntity<?> getListBalances(HttpServletRequest request,
+      @RequestParam(name = "time") String times) {
+    try {
+      if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+        return new ResponseEntity<>(
+            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+            , HttpStatus.OK);
+      }
+      List<Long> result = reportService.getListBalance(times);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).data(result)
+              .message(Constants.SUCCESS_MSG).errorCode(HttpStatus.OK.name().toLowerCase())
+              .httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
+
   @GetMapping("/report")
   public ResponseEntity<?> financeReport(HttpServletRequest request,
       @RequestParam(name = "startTime", required = false, defaultValue = "0") Long start,

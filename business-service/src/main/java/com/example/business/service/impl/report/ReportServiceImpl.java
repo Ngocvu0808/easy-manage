@@ -10,6 +10,7 @@ import com.example.business.utils.DateUtil;
 import com.example.business.utils.cache.CacheRedisService;
 import com.example.business.utils.exception.ResourceNotFoundException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -21,6 +22,7 @@ import kong.unirest.Unirest;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -44,7 +46,7 @@ public class ReportServiceImpl implements ReportService {
   @Override
   public long getBalance() {
     long result = 0L;
-    String balance = cacheRedisService.getValue(balanceKey).toString();
+    String balance = cacheRedisService.getValue(balanceKey).toString().split("-")[0];
     if (balance.isBlank()) {
       Finance lastRecord = financeRepository.findTopByOrderByIdDesc();
       if (lastRecord != null) {
@@ -52,6 +54,25 @@ public class ReportServiceImpl implements ReportService {
       }
     } else {
       result = Long.parseLong(balance);
+    }
+    return result;
+  }
+
+  @Override
+  public List<Long> getListBalance(String times) throws ParseException {
+    List<Long> result = new ArrayList<>();
+    String[] timeSplit = times.split(",");
+    SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy");
+    for (String each: timeSplit) {
+      if (!StringUtils.isEmpty(each)) {
+        long timeFind = df.parse(each).getTime();
+        Finance finance = financeRepository.findTopByUpdateTimeIsLessThanOrderByIdDesc(timeFind);
+        if (finance == null || finance.getBalance() == 0) {
+          result.add(0L);
+        } else {
+          result.add(finance.getBalance());
+        }
+      }
     }
     return result;
   }

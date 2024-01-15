@@ -9,13 +9,23 @@ import com.example.authservice.dto.filter.UserStatusDto;
 import com.example.authservice.dto.group.GroupAndUserDto;
 import com.example.authservice.dto.role.RoleCustomDto;
 import com.example.authservice.dto.role.RoleDto;
+import com.example.authservice.dto.user.GetCustomerResponse;
+import com.example.authservice.dto.user.RegisterCustomerRequest;
+import com.example.authservice.dto.user.UpdateCustomerRequest;
+import com.example.authservice.dto.user.UserActivityResponse;
 import com.example.authservice.dto.user.UserDto;
 import com.example.authservice.entities.UserStatus;
 import com.example.authservice.utils.exception.*;
 import com.example.authservice.utils.permission.Permission;
 import com.example.authservice.utils.response.DataPagingResponse;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.util.List;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public interface UserService {
 
@@ -52,6 +62,8 @@ public interface UserService {
 
   DataPagingResponse<UserDto> getAll(Integer page, Integer limit, String status,
       String roles, String groups, String search, String sort);
+  DataPagingResponse<UserActivityResponse> getAllUserSession(Integer page, Integer limit, String status,
+      String search, String sort, String startDate, String endDate) throws ParseException;
 
   void updateStatusListUser(UpdateStatusUserListDto dto, Integer updaterId);
 
@@ -70,4 +82,11 @@ public interface UserService {
 
   UserDto changePass(Integer userId, ChangePassRequestDto dto)
       throws ResourceNotFoundException, CryptoException, OperationNotImplementException;
+
+
+  GetCustomerResponse getCustomer(Integer userId);
+  int addCustomer(RegisterCustomerRequest requestData)
+      throws IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException, CryptoException;
+  int updateCustomer(UpdateCustomerRequest request, int id);
+  DataPagingResponse<GetCustomerResponse> getCustomerList(Integer page, Integer limit, String search);
 }

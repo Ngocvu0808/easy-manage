@@ -31,32 +31,9 @@ public class TradeFilter extends EntityFilter<TradeHistory> {
         predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.<Long>get("createDate"), startDate));
       }
       if (endDate != 0) {
-        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.<Long>get("createDate"), endDate));
+        predicates.add(criteriaBuilder.lessThanOrEqualTo(root.<Long>get("createDate"), endDate+86400000));
       }
-      if (sort != null && !sort.isEmpty()) {
-        List<Order> orderList = new ArrayList<>();
-        Set<String> keySet = sort.keySet();
-        for (String key : keySet) {
-          String orderType = sort.get(key);
-          switch (key) {
-            case "creatorName":
-              Join<Object, Object> creatorUser = root.join("creatorUser");
-              if (orderType.equals("asc")) {
-                orderList.add(criteriaBuilder.asc(creatorUser.get("name")));
-              } else {
-                orderList.add(criteriaBuilder.desc(creatorUser.get("name")));
-              }
-              break;
-            default:
-              if (orderType.equals("asc")) {
-                orderList.add(criteriaBuilder.asc(root.get(key)));
-              } else {
-                orderList.add(criteriaBuilder.desc(root.get(key)));
-              }
-          }
-        }
-        criteriaQuery.orderBy(orderList);
-      }
+      criteriaQuery.orderBy(criteriaBuilder.desc(root.get("createDate")));
 
       return statisticPredicate(root, criteriaBuilder, criteriaQuery, predicates.size(),
           predicates);

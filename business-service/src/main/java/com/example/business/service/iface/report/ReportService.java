@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface ReportService {
   long getBalance();
+  List<Long> getListBalance(String times) throws ParseException;
   List<FinanceReportResponse> getAllValue(long start, long end)
       throws ResourceNotFoundException, ParseException;
 }

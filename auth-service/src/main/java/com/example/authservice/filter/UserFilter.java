@@ -87,7 +87,7 @@ public class UserFilter extends EntityFilter<User> {
       }
 
       predicates.add(criteriaBuilder.equal(root.get("isDeleted"), isDeleted));
-
+      predicates.add(criteriaBuilder.isNull(root.get("isUserInternal")));
       // sort
       if (sort != null && !sort.isEmpty()) {
         List<Order> orderList = new ArrayList<>();
@@ -123,6 +123,23 @@ public class UserFilter extends EntityFilter<User> {
       predicates.add(criteriaBuilder.equal(root.get("id"), userId));
       predicates.add(criteriaBuilder.equal(root.get("isDeleted"), isDeleted));
 
+      return statisticPredicate(root, criteriaBuilder, criteriaQuery, predicates.size(),
+          predicates);
+    };
+  }
+
+  public Specification<User> getCustomerFilter(String search) {
+    return (root, criteriaQuery, criteriaBuilder) -> {
+      List<Predicate> predicates = new ArrayList<>();
+      if (search != null && !search.isBlank()) {
+        String searchValue = "%" + search.toLowerCase() + "%";
+        Predicate pr1 = criteriaBuilder.like(root.get("name"), searchValue);
+        Predicate pr2 = criteriaBuilder.like(root.get("username"), searchValue);
+        Predicate pr3 = criteriaBuilder.like(root.get("email"), searchValue);
+        predicates.add(criteriaBuilder.or(pr1, pr2, pr3));
+      }
+      predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("isUserInternal"), false)));
+      predicates.add(criteriaBuilder.and(criteriaBuilder.equal(root.get("isDeleted"), false)));
       return statisticPredicate(root, criteriaBuilder, criteriaQuery, predicates.size(),
           predicates);
     };

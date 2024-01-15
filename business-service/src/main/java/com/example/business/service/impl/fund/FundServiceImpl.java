@@ -50,14 +50,31 @@ public class FundServiceImpl implements FundService {
   private String productServiceAuthKey;
   @Value("${product-service.end-point.revert}")
   private String revertEndPoint;
+
+  String getBalanStatus (){
+    String balanceFound = cacheRedisService.getValue(balanceKey).toString();
+    String[] balanceSplit = balanceFound.split("-");
+    String balanceGot = balanceSplit[0];
+    return balanceSplit[1];
+  }
   @Override
-  public FundResponseData fund(FundRequestData data) throws ResourceNotFoundException {
+  public FundResponseData fund(FundRequestData data)
+      throws ResourceNotFoundException, InterruptedException {
+    String balanceFound = cacheRedisService.getValue(balanceKey).toString();
+    String[] balanceSplit = balanceFound.split("-");
+    String balanceGot = balanceSplit[0];
+    String balanceStatus = balanceSplit[1];
+    while ("D".equals(balanceStatus)) {
+      Thread.sleep(1000);
+      balanceStatus = getBalanStatus();
+    }
+    cacheRedisService.setValue(balanceKey, String.valueOf(balanceGot).concat("-D"));
     if (data.getUserId() == null || data.getUserId() ==0) {
       throw new ResourceNotFoundException(ErrorCodeEnum.ID_BLANK);
     }
     FundResponseData result = new FundResponseData();
     result.setUuid(data.getUuid());
-    long balance = reportService.getBalance();
+    long balance = Long.parseLong(balanceGot);
     if (FundType.BUYING.name().equals(data.getType()) && balance < data.getAmount()) {
       result.setFundResult(FungResult.FAILED.name());
       HttpResponse<JsonNode> revert = revert(data.getBatch());
@@ -65,10 +82,11 @@ public class FundServiceImpl implements FundService {
         String revertResult = revert.getBody().toString();
         result.setRevert(revertResult);
       }
+      cacheRedisService.setValue(balanceKey, String.valueOf(balance).concat("-A"));
       return result;
     }
     balance = balance - data.getAmount();
-    cacheRedisService.setValue(balanceKey, String.valueOf(balance));
+    cacheRedisService.setValue(balanceKey, String.valueOf(balance).concat("-A"));
     saveData(data, data.getUserId(), balance);
     result.setFundResult(FungResult.SUCCESSED.name());
     return result;

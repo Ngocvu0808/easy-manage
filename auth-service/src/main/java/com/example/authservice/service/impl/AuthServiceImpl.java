@@ -187,6 +187,7 @@ public class AuthServiceImpl implements AuthService {
         String token = firstKey.toString().replaceAll("\\[|\\]", "").split(":")[3];
         redisService.setExpireTime(firstKey.toString(), expireToken, TimeUnit.SECONDS);
         LoginResponseDto responseDto = new LoginResponseDto();
+        responseDto.setId(user.getId());
         responseDto.setToken(token);
         return responseDto;
       }

@@ -1,6 +1,6 @@
-#CONFIG PORT
+ #CONFIG PORT
 server:
-  port: 19090
+  port: 9090
   max-http-header-size: 1000000
 
 # SPRING CONFIG
@@ -26,7 +26,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-    show-sql: false
+    show-sql: true
   devtools:
     add-properties: false
 

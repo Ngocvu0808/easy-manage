@@ -10,12 +10,18 @@ import com.example.authservice.dto.group.GroupUserCustomDto;
 import com.example.authservice.dto.group.TypeUserGroup;
 import com.example.authservice.dto.role.RoleCustomDto;
 import com.example.authservice.dto.role.RoleDto;
+import com.example.authservice.dto.user.GetCustomerResponse;
+import com.example.authservice.dto.user.RegisterCustomerRequest;
+import com.example.authservice.dto.user.UpdateCustomerRequest;
+import com.example.authservice.dto.user.UserActivityResponse;
 import com.example.authservice.dto.user.UserDto;
 import com.example.authservice.entities.*;
 import com.example.authservice.entities.role.Role;
 import com.example.authservice.entities.role.RoleObject;
+import com.example.authservice.entities.user.CustomerBalance;
 import com.example.authservice.entities.user.User;
 import com.example.authservice.exception.AuthServiceMessageCode;
+import com.example.authservice.filter.UserAcvitityFilter;
 import com.example.authservice.filter.UserFilter;
 import com.example.authservice.mapper.GroupUserMapper;
 import com.example.authservice.mapper.RoleMapper;
@@ -25,6 +31,7 @@ import com.example.authservice.repo.*;
 import com.example.authservice.service.iface.CryptoService;
 import com.example.authservice.service.iface.RoleService;
 import com.example.authservice.service.iface.UserService;
+import com.example.authservice.utils.DateUtil;
 import com.example.authservice.utils.ServiceInfo;
 import com.example.authservice.utils.SortingUtils;
 import com.example.authservice.utils.cache.CacheRedisService;
@@ -33,9 +40,13 @@ import com.example.authservice.utils.permission.ObjectPermission;
 import com.example.authservice.utils.permission.Permission;
 import com.example.authservice.utils.permission.SpecificPermission;
 import com.example.authservice.utils.response.DataPagingResponse;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,6 +54,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.util.StringUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -52,12 +64,19 @@ public class UserServiceImpl implements UserService {
 
   private static final String FILTER_USER = "user";
   private static final String FILTER_GROUP = "group";
+  private final String PATTERN = "yyyy-MM-dd";
+  private final String PATTERN2 = "yyyy-MM-dd HH:mm:ss";
+
+  private final SimpleDateFormat df = new SimpleDateFormat(PATTERN);
+  private final SimpleDateFormat df2 = new SimpleDateFormat(PATTERN2);
 
   @Value("${auth.default-pass}")
   private String defaultPassword;
 
   @Value("${auth.crypto.private-key}")
   private String privateKey;
+  @Value("${auth.crypto.public-key}")
+  private String publicKey;
 
   @Value("${auth.code.prefix:auth:jwt:}")
   private String prefix;
@@ -69,7 +88,8 @@ public class UserServiceImpl implements UserService {
   private final GroupRepository groupRepository;
   private final GroupUserRepository groupUserRepository;
   private final RoleObjectRepository roleObjectRepository;
-
+  private final UserActivityRepository userActivityRepository;
+  private final CustomerBalanceRepository customerBalanceRepository;
   private final UserMapper userMapper;
   private final RoleMapper roleMapper;
   private final GroupUserMapper groupUserMapper;
@@ -88,7 +108,8 @@ public class UserServiceImpl implements UserService {
       GroupRepository groupRepository,
       GroupUserRepository groupUserRepository,
       RoleObjectRepository roleObjectRepository,
-      UserMapper userMapper,
+      UserActivityRepository userActivityRepository,
+      CustomerBalanceRepository customerBalanceRepository, UserMapper userMapper,
       RoleMapper roleMapper,
       GroupUserMapper groupUserMapper,
       RoleUserMapper roleUserMapper,
@@ -102,6 +123,8 @@ public class UserServiceImpl implements UserService {
     this.groupRepository = groupRepository;
     this.groupUserRepository = groupUserRepository;
     this.roleObjectRepository = roleObjectRepository;
+    this.userActivityRepository = userActivityRepository;
+    this.customerBalanceRepository = customerBalanceRepository;
     this.userMapper = userMapper;
     this.roleMapper = roleMapper;
     this.groupUserMapper = groupUserMapper;
@@ -455,6 +478,48 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
+  public DataPagingResponse<UserActivityResponse> getAllUserSession(Integer page, Integer limit, String status,
+      String search, String sort, String startDate, String endDate) throws ParseException {
+    Map<String, String> map = SortingUtils.detectSortType(sort);
+    Date startTime = (startDate == null) ? null :df.parse(startDate);
+    Date endTime = (endDate == null) ? null :df.parse(endDate);
+    if (endTime != null) {
+      endTime = DateUtil.addDays(endTime, 1);
+    }
+    List<User> optional = userRepository.findByUsername(search);
+    Set<Integer> ids = new HashSet<>();
+    if (!optional.isEmpty()) {
+      ids.add(optional.get(0).getId());
+    }
+
+    Specification<UserActivity> filter = new UserAcvitityFilter().filter(ids, search, status, map,
+        startTime, endTime);
+
+    Page<UserActivity> productPages = userActivityRepository.findAll(filter, PageRequest.of(page - 1, limit));
+
+    List<UserActivityResponse> responseData = getResultData(productPages.getContent());
+    DataPagingResponse<UserActivityResponse> dataPagingResponses = new DataPagingResponse<>();
+    dataPagingResponses.setList(responseData);
+    dataPagingResponses.setTotalPage(productPages.getTotalPages());
+    dataPagingResponses.setNum(productPages.getTotalElements());
+    dataPagingResponses.setCurrentPage(page);
+    return dataPagingResponses;
+  }
+
+  private List<UserActivityResponse> getResultData(List<UserActivity> list) {
+    List<UserActivityResponse> result = new ArrayList<>();
+    for (UserActivity each: list) {
+      UserActivityResponse one = new UserActivityResponse();
+      BeanUtils.copyProperties(each, one, "createTime", "token", "id");
+      Optional<User> optional = userRepository.findById(each.getUserId());
+      optional.ifPresent(user -> one.setUserName(user.getUsername()));
+      String date = df2.format(each.getCreateTime());
+      one.setTime(date);
+      result.add(one);
+    }
+    return result;
+  }
+  @Override
   @Transactional
   @Modifying
   public void updateStatusListUser(UpdateStatusUserListDto dto, Integer updaterId) {
@@ -764,4 +829,83 @@ public class UserServiceImpl implements UserService {
       logger.info("error when remove key Redis, reason: {}", e.getMessage());
     }
   }
+
+  public GetCustomerResponse getCustomer(Integer userId) {
+    GetCustomerResponse result = new GetCustomerResponse();
+    Optional<User> userOptional = userRepository.findById(userId);
+    if (userOptional.isPresent()) {
+      User user = userOptional.get();
+      result.setId(userId);
+      result.setUsername(user.getUsername());
+      result.setEmail(user.getEmail());
+      result.setName(user.getName());
+      Optional<CustomerBalance> customerOptional = customerBalanceRepository.findByCustomerId(userId);
+      if (customerOptional.isPresent()) {
+        CustomerBalance customerBalance = customerOptional.get();
+        result.setBalance(customerBalance.getBalance());
+      } else
+        result.setBalance(0);
+    }
+    return result;
+  }
+
+  public int addCustomer(RegisterCustomerRequest request) throws CryptoException {
+    User u = new User();
+    u.setEmail(request.getEmail());
+    u.setPassword(passwordEncoder.encode(request.getPassword()));
+    u.setName(request.getName());
+    u.setUsername(request.getUsername());
+    u.setIsUserInternal(false);
+    User user = userRepository.save(u);
+    return user.getId();
+  }
+
+
+  public int updateCustomer(UpdateCustomerRequest request, int id) {
+    Optional<User> userOptional = userRepository.findById(id);
+    if (userOptional.isPresent()) {
+      User u = userOptional.get();
+      u.setEmail(StringUtils.isEmpty(request.getEmail()) ? u.getEmail() : request.getEmail());
+      u.setPassword(StringUtils.isEmpty(request.getPassword()) ? u.getPassword() : passwordEncoder.encode(request.getPassword()));
+      u.setName(StringUtils.isEmpty(request.getName()) ? u.getName() : request.getName());
+      u.setUsername(StringUtils.isEmpty(request.getUsername()) ? u.getUsername() : request.getUsername());
+      u.setIsUserInternal(false);
+      if (request.getBalance() != 0l) {
+        Optional<CustomerBalance> customerBalanceOptional = customerBalanceRepository.findByCustomerId(id);
+        if (customerBalanceOptional.isPresent()) {
+          CustomerBalance customerBalance = customerBalanceOptional.get();
+          customerBalance.setBalance(request.getBalance());
+          customerBalanceRepository.save(customerBalance);
+        } else {
+          CustomerBalance customerBalance = new CustomerBalance();
+          customerBalance.setCustomerId(id);
+          customerBalance.setBalance(request.getBalance());
+          customerBalanceRepository.save(customerBalance);
+        }
+      }
+      User user = userRepository.save(u);
+      return user.getId();
+    }
+    return 0;
+  }
+
+  public DataPagingResponse<GetCustomerResponse> getCustomerList(Integer page, Integer limit, String search) {
+    Page<User> userPages = userRepository
+        .findAll(new UserFilter().getCustomerFilter(search), PageRequest.of(page - 1, limit));
+    List<User> users = userPages.getContent();
+    List<GetCustomerResponse> responseDataList = new ArrayList<>();
+    for (User user : users) {
+      if (user != null) {
+        GetCustomerResponse each = getCustomer(user.getId());
+        responseDataList.add(each);
+      }
+    }
+    DataPagingResponse<GetCustomerResponse> dataPagingResponses = new DataPagingResponse<>();
+    dataPagingResponses.setList(responseDataList);
+    dataPagingResponses.setTotalPage(userPages.getTotalPages());
+    dataPagingResponses.setNum(userPages.getTotalElements());
+    dataPagingResponses.setCurrentPage(page);
+    return dataPagingResponses;
+  }
+
 }

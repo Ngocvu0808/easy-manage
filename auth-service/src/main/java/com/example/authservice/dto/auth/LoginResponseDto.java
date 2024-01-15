@@ -16,8 +16,17 @@ import lombok.NoArgsConstructor;
 @JsonInclude(Include.NON_NULL)
 public class LoginResponseDto {
 
+  private int id;
   private String token;
   private String jwt;
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
+  }
 
   public String getToken() {
     return token;

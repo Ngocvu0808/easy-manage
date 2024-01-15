@@ -31,4 +31,6 @@ public class FundHistory {
   private String batch;
   @Column(name = "user_id")
   private int userId;
+  @Column(name = "payment_type")
+  private int paymentType;
 }

@@ -2,7 +2,8 @@ package com.example.product.entity;
 
 public enum FundType {
   BUYING(0),
-  SELLING(1);
+  SELLING(1),
+  SELLING_ONLINE(2);
 
   private final Integer value;
 

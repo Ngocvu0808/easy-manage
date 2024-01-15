@@ -11,7 +11,7 @@ public class GetProductResponse {
   private String name;
   private String type;
   private long buyPrice;
-  private String source;
+  private String link;
   private long createDate;
   private long sellPrice;
   private long available;
