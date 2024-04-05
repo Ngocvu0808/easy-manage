@@ -21,8 +21,11 @@ import com.example.product.service.iface.ProductBusinessService;
 import com.example.product.service.iface.kafka.ProducerService;
 import com.example.product.service.iface.ms.BusinessService;
 import com.example.product.utils.JsonUtils;
+import com.example.product.utils.auth.AuthGuardService;
 import com.example.product.utils.exception.ResourceNotFoundException;
+import com.example.product.utils.exception.UnAuthorizedException;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,17 +47,19 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
   private final ProducerService producerService;
   private final SellAddressRepository sellAddressRepository;
   private final TradeHistoryRepository tradeHistoryRepository;
+  private final AuthGuardService authGuardService;
 
   public ProductBusinessServiceImpl(ProductRepository productRepository,
       ProductBusinessRepository productBusinessRepository, BusinessService businessService,
       ProducerService producerService, SellAddressRepository sellAddressRepository,
-      TradeHistoryRepository tradeHistoryRepository) {
+      TradeHistoryRepository tradeHistoryRepository, AuthGuardService authGuardService) {
     this.productRepository = productRepository;
     this.productBusinessRepository = productBusinessRepository;
     this.businessService = businessService;
     this.producerService = producerService;
     this.sellAddressRepository = sellAddressRepository;
     this.tradeHistoryRepository = tradeHistoryRepository;
+    this.authGuardService = authGuardService;
   }
 
   @Value("${kafka.topic.fund}")
@@ -71,17 +76,18 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
     String timeAdd = simpleDateFormat.format(date);
     checkProductAvailable(request.getProducts(), FundType.BUYING.name());
     long billValue = getBillValue(request.getProducts(), BUY);
-    buyProduct(request, timeAdd, date);
+    buyProduct(request, timeAdd, date, billValue);
     fund(billValue, request.getSource(), FundType.BUYING.name(), timeAdd, request.getUserId(), null);
     return true;
   }
 
-  private void buyProduct(BuyingProductRequest request, String timeAdd, Date date) {
+  private void buyProduct(BuyingProductRequest request, String timeAdd, Date date, long billValue) {
     Set<Integer> productIds = request.getProducts().stream().map(RequestData::getId).collect(Collectors.toSet());
     List<RequestData> products = request.getProducts();
     List<BusinessProduct> saveRequest = new ArrayList<BusinessProduct>();
     List<TradeHistory> tradeSaveRequest = new ArrayList<TradeHistory>();
     for (int productId : productIds) {
+      RequestData data = products.stream().filter(r -> r.getId() == productId).findFirst().get();
       BusinessProduct businessProduct = new BusinessProduct();
       businessProduct.setProductId(productId);
       businessProduct.setAvailable(findAmount(products, productId).getAmount());
@@ -98,6 +104,8 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
       tradeHistory.setAmount(findAmount(products, productId).getAmount());
       tradeHistory.setBatch(timeAdd);
       tradeHistory.setCreateDate(new Date().getTime());
+      tradeHistory.setEachValue(data.getValue());
+      tradeHistory.setBillValue(billValue);
       tradeSaveRequest.add(tradeHistory);
     }
     productBusinessRepository.saveAll(saveRequest);
@@ -123,6 +131,7 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
     }
   }
 
+
   private void checkSellableProduct(List<RequestData> products)
       throws ResourceNotFoundException {
     Set<Integer> productIds = products.stream().map(RequestData::getId).collect(Collectors.toSet());
@@ -145,13 +154,15 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
   private RequestData findAmount(List<RequestData> products, int id) {
     return products.stream().filter(r -> r.getId() == id).findFirst().get();
   }
+
+
   private long getBillValue(List<RequestData> products, String type) throws ResourceNotFoundException {
     long totalBill = 0L;
     Set<Integer> ids = products.stream().map(RequestData::getId).collect(Collectors.toSet());
     for (Integer productId : ids) {
       Optional<Product> productOptional = productRepository.findById(productId);
       Product product = productOptional.get();
-      totalBill += product.getBuyPrice() * findAmount(products, productId).getAmount();
+      totalBill += findAmount(products, productId).getValue();
     }
 //    long balance = 9999999999999L;
     long balance = this.getBalance();
@@ -167,7 +178,8 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
 
   @Override
   @Transactional
-  public boolean sell(SellingProductRequest request) throws ResourceNotFoundException {
+  public boolean sell(HttpServletRequest servletRequest, SellingProductRequest request)
+      throws ResourceNotFoundException, UnAuthorizedException {
     if (request.getUserId() == null || request.getUserId() ==0) {
       throw new ResourceNotFoundException(ErrorCodeEnum.ID_BLANK);
     }
@@ -175,8 +187,10 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMMddHHmmss");
     String timeAdd = simpleDateFormat.format(date);
     checkProductAvailable(request.getProducts(), FundType.SELLING.name());
-    sellProduct(request.getProducts(), timeAdd);
+
     long billValue = getBillValue(request.getProducts(), SELL);
+    String username = authGuardService.getUsernameFromToken(servletRequest);
+    sellProduct(request.getProducts(), timeAdd, billValue, username, request.getCustomerPhone());
     fund(billValue, request.getCustomerPhone(), FundType.SELLING.name(), timeAdd,
         request.getUserId(), request.getType());
     return true;
@@ -193,9 +207,9 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
     String timeAdd = simpleDateFormat.format(date);
     checkProductAvailable(request.getProducts(), FundType.SELLING.name());
 
-    sellProduct(request.getProducts(), timeAdd);
-    saveAddressInfo(request, timeAdd);
     long billValue = getBillValue(request.getProducts(), SELL);
+    sellProduct(request.getProducts(), timeAdd, billValue, "", request.getCustomerPhone());
+    saveAddressInfo(request, timeAdd);
     fund(billValue, request.getCustomerPhone(), FundType.SELLING.name(), timeAdd,
         request.getUserId(), request.getType());
     return true;
@@ -211,10 +225,14 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
       info.setCusName(address.getName());
       info.setPhone(address.getPhone());
       info.setCusId(request.getUserId());
+      info.setStatus("0");
       sellAddressRepository.save(info);
     }
 
   }
+
+
+
   @Override
   public boolean revert(String batch) throws ResourceNotFoundException {
     List<TradeHistory> tradeHistories = tradeHistoryRepository.findAllByBatch(batch);
@@ -242,11 +260,12 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
     return true;
   }
 
-  private void sellProduct(List<RequestData> products, String batch) {
+  private void sellProduct(List<RequestData> products, String batch, long billValue, String username, String cusName) {
     Set<Integer> productIds = products.stream().map(RequestData::getId).collect(Collectors.toSet());
     List<BusinessProduct> saveRequest = new ArrayList<>();
     List<TradeHistory> tradeSaveRequest = new ArrayList<>();
     for (Integer productId : productIds) {
+      RequestData data = products.stream().filter(r -> r.getId() == productId).findFirst().get();
       List<BusinessProduct> availableProducts = productBusinessRepository
           .findAllByProductIdAndAvailableIsNotOrderByInDateAsc(productId, 0);
       int amount = findAmount(products, productId).getAmount();
@@ -267,6 +286,10 @@ public class ProductBusinessServiceImpl implements ProductBusinessService {
       tradeHistory.setType(FundType.SELLING.name());
       tradeHistory.setBatch(batch);
       tradeHistory.setCreateDate(new Date().getTime());
+      tradeHistory.setEachValue(data.getValue());
+      tradeHistory.setBillValue(billValue);
+      tradeHistory.setUsername(username);
+      tradeHistory.setCusName(cusName);
       tradeSaveRequest.add(tradeHistory);
     }
     productBusinessRepository.saveAll(saveRequest);

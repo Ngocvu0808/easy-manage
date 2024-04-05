@@ -34,4 +34,6 @@ public class SellAddressInfo {
   private String city;
   @Column(name = "status")
   private String status;
+  @Column(name = "username")
+  private String username;
 }

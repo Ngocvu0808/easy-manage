@@ -8,4 +8,5 @@ import lombok.Setter;
 public class RequestData{
   private int id;
   private int amount;
+  private long value;
 }

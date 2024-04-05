@@ -53,7 +53,8 @@ public class ProductController {
       @RequestParam(name = "limit", required = false, defaultValue = "20") Integer limit,
       @RequestParam(name = "search", required = false, defaultValue = "") String search,
       @RequestParam(name = "status", required = false) String status,
-      @RequestParam(name = "sort", required = false, defaultValue = "") String sort) {
+      @RequestParam(name = "sort", required = false, defaultValue = "") String sort,
+      @RequestParam(name = "code", required = false, defaultValue = "") String code) {
     try {
       if (!SortingUtils.validateSort(sort, GetProductResponse.class)) {
         return new ResponseEntity<>(
@@ -63,7 +64,7 @@ public class ProductController {
             , HttpStatus.OK);
       }
       DataPagingResponse<GetProductResponse> data = productService
-          .getAll(page, limit, search, status, sort);
+          .getAll(page, limit, search, status, sort, code);
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).data(data)
               .message(Constants.SUCCESS_MSG).errorCode(HttpStatus.OK.name().toLowerCase())
@@ -72,7 +73,7 @@ public class ProductController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -92,13 +93,33 @@ public class ProductController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
     }
   }
 
+
+  @GetMapping("/discount")
+  public ResponseEntity<?> findDiscount(HttpServletRequest request,
+      @RequestParam(name = "code", required = false, defaultValue = "") String code) {
+    try {
+      DataPagingResponse<GetProductResponse> data = productService.searchDiscount(code);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).data(data)
+              .message(Constants.SUCCESS_MSG).errorCode(HttpStatus.OK.name().toLowerCase())
+              .httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
 
   @PostMapping("")
   public ResponseEntity<?> add(HttpServletRequest request,
@@ -128,7 +149,7 @@ public class ProductController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.BAD_REQUEST);
@@ -136,17 +157,17 @@ public class ProductController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<?> add(HttpServletRequest request,
+  public ResponseEntity<?> add(//HttpServletRequest request,
       @PathVariable("id") Integer id) {
     try {
-      if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
-          PermissionObjectCode.ProductPermissionCode.PRODUCT_DETAIL)) {
-        return new ResponseEntity<>(
-            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
-                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
-                .httpCode(HttpStatus.FORBIDDEN.value()).build()
-            , HttpStatus.OK);
-      }
+//      if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+//          PermissionObjectCode.ProductPermissionCode.PRODUCT_DETAIL)) {
+//        return new ResponseEntity<>(
+//            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+//                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+//                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+//            , HttpStatus.OK);
+//      }
       GetProductResponse result = productService.findOne(id);
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).data(result).message(Constants.SUCCESS_MSG)
@@ -162,7 +183,7 @@ public class ProductController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -190,7 +211,7 @@ public class ProductController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -223,7 +244,7 @@ public class ProductController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -258,7 +279,7 @@ public class ProductController {
     } catch(Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -288,7 +309,7 @@ public class ProductController {
     } catch(Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -315,7 +336,7 @@ public class ProductController {
     } catch(Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);

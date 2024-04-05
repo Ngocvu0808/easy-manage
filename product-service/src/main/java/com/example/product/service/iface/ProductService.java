@@ -14,8 +14,9 @@ public interface ProductService {
   int add(AddProductRequest addProductRequest) throws ResourceNotFoundException;
 
   DataPagingResponse<GetProductResponse> getAll(Integer page, Integer limit, String search,
-      String status, String sort);
+      String status, String sort, String promotionCode);
   List<GetProductResponse> search(String search);
+  DataPagingResponse<GetProductResponse> searchDiscount(String code);
 
   boolean delete(int id) throws ResourceNotFoundException;
 

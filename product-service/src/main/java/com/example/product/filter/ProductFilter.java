@@ -9,10 +9,11 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 public class ProductFilter extends EntityFilter<Product> {
   public Specification<Product> filter(Set<Integer> ids, String search, String status,
-      Map<String, String> sort) {
+      Map<String, String> sort,  String promotionCode) {
     return (root, criteriaQuery, criteriaBuilder) -> {
       List<Predicate> predicates = new ArrayList<>();
       if (search != null && !search.isBlank()) {
@@ -28,7 +29,9 @@ public class ProductFilter extends EntityFilter<Product> {
       if (ids != null && ids.size() > 0) {
         predicates.add(criteriaBuilder.in(root.get("id")).value(ids));
       }
-
+      if (promotionCode != null  && !StringUtils.isEmpty(promotionCode)) {
+        predicates.add(criteriaBuilder.equal(root.get("promotion"), promotionCode));
+      }
       if (sort != null && !sort.isEmpty()) {
         List<Order> orderList = new ArrayList<>();
         Set<String> keySet = sort.keySet();
@@ -58,4 +61,17 @@ public class ProductFilter extends EntityFilter<Product> {
           predicates);
     };
   }
+
+
+  public Specification<Product> filterDiscount(String promotion) {
+    return (root, criteriaQuery, criteriaBuilder) -> {
+      List<Predicate> predicates = new ArrayList<>();
+
+      predicates.add(criteriaBuilder.equal(root.get("promotion"), promotion));
+
+      return statisticPredicate(root, criteriaBuilder, criteriaQuery, predicates.size(),
+          predicates);
+    };
+  }
+
 }

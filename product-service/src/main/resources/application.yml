@@ -23,7 +23,7 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-    show-sql: false
+    show-sql: true
 
   # KAFKA CONFIGURATION
   kafka:
@@ -76,6 +76,7 @@ business-service:
   end-point:
     check-balance: /business/check-balance
     fund: /business/fund
+    find-sell-online: /business/fund-online
   field:
     check-balance:
       balance: data

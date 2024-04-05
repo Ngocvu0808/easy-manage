@@ -2,6 +2,7 @@ package com.example.product.config;
 
 public enum ErrorCodeEnum {
   PRODUCT_NOT_FOUND("001", "Không tìm thấy sản phẩm"),
+  BILL_NOT_FOUND("001", "Không tìm thấy đơn hàng"),
   PRODUCT_TYPE_NOT_VALID("001", "Loại hàng không hợp lệ"),
   ID_BLANK("002", "Id truyền vào null"),
   PRODUCT_NOT_SUPPORT("003", "Sản phẩm đã ngừng kinh doanh"),

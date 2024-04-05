@@ -23,5 +23,7 @@ public class CustomerTradeHistoryResponse {
     private String totalBill;
     private String products;
     private String status;
+    private String batch;
+    private String username;
   }
 }

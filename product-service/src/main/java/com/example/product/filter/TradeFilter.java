@@ -22,7 +22,9 @@ public class TradeFilter extends EntityFilter<TradeHistory> {
         Predicate batch = criteriaBuilder.like(root.get("batch"), searchValue.trim());
         Predicate code = criteriaBuilder.like(root.get("productCode"), searchValue.trim());
         Predicate type = criteriaBuilder.like(root.get("type"), searchValue.trim());
-        predicates.add(criteriaBuilder.or(batch, code, type));
+        Predicate cusName = criteriaBuilder.like(root.get("cus_name"), searchValue.trim());
+        Predicate username = criteriaBuilder.like(root.get("username"), searchValue.trim());
+        predicates.add(criteriaBuilder.or(batch, code, type, cusName, username));
       }
       if (ids != null && ids.size() > 0) {
         predicates.add(criteriaBuilder.in(root.get("id")).value(ids));

@@ -8,10 +8,12 @@ import com.example.product.entity.BusinessProduct;
 import com.example.product.entity.Product;
 import com.example.product.entity.ProductReport;
 import com.example.product.entity.ProductStatus;
+import com.example.product.entity.Promotion;
 import com.example.product.filter.ProductFilter;
 import com.example.product.repo.ProductBusinessRepository;
 import com.example.product.repo.ProductReportRepository;
 import com.example.product.repo.ProductRepository;
+import com.example.product.repo.PromotionRepository;
 import com.example.product.service.iface.ProductService;
 import com.example.product.utils.DateUtil;
 import com.example.product.utils.SortingUtils;
@@ -40,11 +42,14 @@ public class ProductServiceImpl implements ProductService {
   private final ProductRepository productRepository;
   private final ProductBusinessRepository productBusinessRepository;
 
+  private final PromotionRepository promotionRepository;
   private final ProductReportRepository productReportRepository;
   public ProductServiceImpl(ProductRepository productRepository,
-      ProductBusinessRepository productBusinessRepository, ProductReportRepository productReportRepository) {
+      ProductBusinessRepository productBusinessRepository, PromotionRepository promotionRepository,
+      ProductReportRepository productReportRepository) {
     this.productRepository = productRepository;
     this.productBusinessRepository = productBusinessRepository;
+    this.promotionRepository = promotionRepository;
     this.productReportRepository = productReportRepository;
   }
 
@@ -70,9 +75,9 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public DataPagingResponse<GetProductResponse> getAll(Integer page, Integer limit,
-      String search, String status, String sort) {
+      String search, String status, String sort, String promotionCode) {
     Map<String, String> sortMap = SortingUtils.detectSortType(sort);
-    Specification<Product> filter = new ProductFilter().filter(null, search, status, sortMap);
+    Specification<Product> filter = new ProductFilter().filter(null, search, status, sortMap, promotionCode);
     Page<Product> productPages = productRepository.findAll(filter, PageRequest.of(page - 1, limit));
 
     List<Product> products = productPages.getContent();
@@ -81,6 +86,10 @@ public class ProductServiceImpl implements ProductService {
       GetProductResponse each = new GetProductResponse();
       BeanUtils.copyProperties(product, each);
       each.setAvailable(getAvailable(product));
+      long discountPrice = getProductDiscountPrice(product);
+      each.setDiscountPrice(discountPrice);
+      if (each.getDiscountPrice() != each.getSellPrice())
+        each.setSaleOff("YES");
       clientDetails.add(each);
     }
     DataPagingResponse<GetProductResponse> dataPagingResponses = new DataPagingResponse<>();
@@ -94,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public List<GetProductResponse> search(String search) {
     Map<String, String> sortMap = SortingUtils.detectSortType(null);
-    Specification<Product> filter = new ProductFilter().filter(null, search, ProductStatus.ACTIVE.name(), sortMap);
+    Specification<Product> filter = new ProductFilter().filter(null, search, ProductStatus.ACTIVE.name(), sortMap, null);
     Page<Product> productPages = productRepository.findAll(filter, PageRequest.of(0, 10));
 
     List<Product> products = productPages.getContent();
@@ -107,7 +116,29 @@ public class ProductServiceImpl implements ProductService {
     }
     return clientDetails;
   }
+  public DataPagingResponse<GetProductResponse> searchDiscount(String code) {
+    Specification<Product> filter = new ProductFilter().filterDiscount(code);
+    Page<Product> productPages = productRepository.findAll(filter, PageRequest.of(0, 15));
 
+    List<Product> products = productPages.getContent();
+    List<GetProductResponse> clientDetails = new ArrayList<>();
+    for (Product product : products) {
+      GetProductResponse each = new GetProductResponse();
+      BeanUtils.copyProperties(product, each);
+      each.setAvailable(getAvailable(product));
+      long discountPrice = getProductDiscountPrice(product);
+      each.setDiscountPrice(discountPrice);
+      if (each.getDiscountPrice() != each.getSellPrice())
+        each.setSaleOff("YES");
+      clientDetails.add(each);
+    }
+    DataPagingResponse<GetProductResponse> dataPagingResponses = new DataPagingResponse<>();
+    dataPagingResponses.setList(clientDetails);
+    dataPagingResponses.setTotalPage(productPages.getTotalPages());
+    dataPagingResponses.setNum(productPages.getTotalElements());
+    dataPagingResponses.setCurrentPage(0);
+    return dataPagingResponses;
+  }
   private long getAvailable(Product product) {
     List<BusinessProduct> businessProducts = productBusinessRepository.findAllByProductId(
         product.getId());
@@ -145,9 +176,23 @@ public class ProductServiceImpl implements ProductService {
     Product product = products.get();
     GetProductResponse result = new GetProductResponse();
     BeanUtils.copyProperties(product, result);
+    long discountPrice = getProductDiscountPrice(product);
+    result.setDiscountPrice(discountPrice);
+    if (result.getDiscountPrice() != result.getSellPrice())
+      result.setSaleOff("YES");
     return result;
   }
 
+
+  Long getProductDiscountPrice(Product product) {
+    List<Promotion> promotionList = promotionRepository.findAllByCodeAndStatus(product.getPromotion(), "ON");
+    if (promotionList != null  && promotionList.size() != 0) {
+      Promotion promotion = promotionList.get(0);
+      long result = product.getSellPrice() * (100 - promotion.getDiscount())/100;
+      return result;
+    }
+    return product.getSellPrice();
+  }
   @Override
   public boolean update(int id, UpdateProductRequest request) throws ResourceNotFoundException {
     if (id == 0) {

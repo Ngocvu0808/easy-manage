@@ -39,4 +39,7 @@ public class Product {
   private String status;
   @Column(name = "link")
   private String link;
+
+  @Column(name = "promotion")
+  private String promotion;
 }

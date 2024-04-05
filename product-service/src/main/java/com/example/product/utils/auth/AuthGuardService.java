@@ -26,5 +26,6 @@ public interface AuthGuardService {
 
   Boolean checkPermissionByJwt(String jwt, Integer objectId, String objectCode,
       String permissionCode) throws ProxyAuthenticationException, ProxyAuthenticationException;
+  String getUsernameFromToken(HttpServletRequest request) throws UnAuthorizedException;
 
 }

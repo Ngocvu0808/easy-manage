@@ -4,7 +4,9 @@ import com.example.business.config.Constants;
 import com.example.business.config.ErrorCodeEnum;
 import com.example.business.dto.response.FinanceReportResponse;
 import com.example.business.entity.Finance;
+import com.example.business.entity.FundHistory;
 import com.example.business.repo.FinanceRepository;
+import com.example.business.repo.FundRepository;
 import com.example.business.service.iface.report.ReportService;
 import com.example.business.utils.DateUtil;
 import com.example.business.utils.cache.CacheRedisService;
@@ -12,10 +14,12 @@ import com.example.business.utils.exception.ResourceNotFoundException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -31,9 +35,12 @@ public class ReportServiceImpl implements ReportService {
       .getLogger(ReportServiceImpl.class);
   private final CacheRedisService cacheRedisService;
   private final FinanceRepository financeRepository;
-  public ReportServiceImpl(CacheRedisService cacheRedisService, FinanceRepository financeRepository) {
+  private final FundRepository fundRepository;
+  public ReportServiceImpl(CacheRedisService cacheRedisService, FinanceRepository financeRepository,
+      FundRepository fundRepository) {
     this.cacheRedisService = cacheRedisService;
     this.financeRepository = financeRepository;
+    this.fundRepository = fundRepository;
   }
   @Value("${spring.redis.key.balance}")
   private String balanceKey;
@@ -133,6 +140,33 @@ public class ReportServiceImpl implements ReportService {
             jsonNode.toString());
       }
       result = jsonNode.getObject().getLong("data");
+    }
+    return result;
+  }
+
+  public Map<String, Long> getAllFundByUserId(int userId) {
+    List<FundHistory> fundHisList = fundRepository.findAllByUserId(userId);
+    Map<String, Long> result = new HashMap<>();
+    if (fundHisList == null)
+      return result;
+    for (FundHistory each : fundHisList) {
+      result.put(each.getBatch(), each.getAmount());
+    }
+    return result;
+  }
+
+
+  public Map<String, Long> getAllFundByUserIdIn(String ids) {
+    String[] idSplit = ids.split(",");
+    List<Integer> idList = Arrays.stream(idSplit)
+        .map(Integer::parseInt) // Chuyển đổi từ chuỗi sang Integer
+        .collect(Collectors.toList());
+    List<FundHistory> fundHisList = fundRepository.findAllByUserIdIn(idList);
+    Map<String, Long> result = new HashMap<>();
+    if (fundHisList == null)
+      return result;
+    for (FundHistory each : fundHisList) {
+      result.put(each.getBatch(), each.getAmount());
     }
     return result;
   }

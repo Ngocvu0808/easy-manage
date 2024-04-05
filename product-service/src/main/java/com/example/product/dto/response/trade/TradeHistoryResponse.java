@@ -1,6 +1,5 @@
 package com.example.product.dto.response.trade;
 
-import javax.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,6 +14,10 @@ public class TradeHistoryResponse {
   private int productId;
   private String productName;
   private String productCode;
+  private String username;
+  private long eachValue;
+  private long billValue;
+  private String cusName;
   private int amount;
   private String type;
 }

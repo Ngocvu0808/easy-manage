@@ -1324,7 +1324,7 @@ public class UserController {
   }
 
   @PostMapping("/customer")
-  public ResponseEntity<?> customer(HttpServletRequest request, @RequestBody RegisterCustomerRequest requestData) {
+  public ResponseEntity<?> customer(@RequestBody RegisterCustomerRequest requestData) {
     try {
       int result = userService.addCustomer(requestData);
       return new ResponseEntity<>(
@@ -1342,11 +1342,19 @@ public class UserController {
   }
 
   @GetMapping("customer")
-  public ResponseEntity<?> customer(HttpServletRequest request,
+  public ResponseEntity<?> customer(
       @RequestParam(name = "page", required = false, defaultValue = "1") Integer page,
       @RequestParam(name = "limit", required = false, defaultValue = "10") Integer limit,
       @RequestParam(name = "search", required = false, defaultValue = "") String search) {
     try {
+      //if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+      ////          PermissionObjectCode.ProductPermissionCode.FIND_CUSTOMER)) {
+      ////        return new ResponseEntity<>(
+      ////            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+      ////                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+      ////                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+      ////            , HttpStatus.OK);
+      ////      }
       DataPagingResponse<GetCustomerResponse>  result = userService.getCustomerList(page, limit, search);
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(result)
@@ -1365,6 +1373,14 @@ public class UserController {
   public ResponseEntity<?> customer(@PathVariable("id") Integer id,
       @RequestBody UpdateCustomerRequest requestData) {
     try {
+      //if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+      ////          PermissionObjectCode.ProductPermissionCode.UPDATE_CUSTOMER)) {
+      ////        return new ResponseEntity<>(
+      ////            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+      ////                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+      ////                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+      ////            , HttpStatus.OK);
+      ////      }
       int result = userService.updateCustomer(requestData, id);
       return new ResponseEntity<>(
           GetMethodResponse.builder().status(true).message(Constants.SUCCESS_MSG).data(result)
@@ -1379,5 +1395,4 @@ public class UserController {
           , HttpStatus.OK);
     }
   }
-
 }

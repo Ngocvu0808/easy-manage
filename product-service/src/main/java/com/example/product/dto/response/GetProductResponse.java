@@ -14,6 +14,8 @@ public class GetProductResponse {
   private String link;
   private long createDate;
   private long sellPrice;
+  private long discountPrice;
+  private String saleOff;
   private long available;
   private String status;
 }

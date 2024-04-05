@@ -32,6 +32,14 @@ public class TradeHistory {
   private String productCode;
   @Column(name = "amount")
   private int amount;
+  @Column(name = "bill_value")
+  private long billValue;
+  @Column(name = "each_value")
+  private long eachValue;
+  @Column(name = "username")
+  private String username;
+  @Column(name = "cus_name")
+  private String cusName;
   @Column(name = "type")
   private String type;
 }

@@ -11,10 +11,12 @@ import com.example.business.utils.auth.AuthGuardService;
 import com.example.business.utils.response.BaseMethodResponse;
 import com.example.business.utils.response.GetMethodResponse;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,7 +61,7 @@ public class BusinessController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -86,7 +88,7 @@ public class BusinessController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -114,7 +116,7 @@ public class BusinessController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -143,7 +145,62 @@ public class BusinessController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
+
+  @GetMapping("/fund-online/{id}")
+  public ResponseEntity<?> financeReport(HttpServletRequest request,
+      @PathVariable("id") Integer id) {
+    try {
+//      if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+//          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+//        return new ResponseEntity<>(
+//            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+//                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+//                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+//            , HttpStatus.OK);
+//      }
+      Map<String, Long> result = reportService.getAllFundByUserId(id);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).data(result)
+              .message(Constants.SUCCESS_MSG).errorCode(HttpStatus.OK.name().toLowerCase())
+              .httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
+              .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
+              .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
+          , HttpStatus.OK);
+    }
+  }
+  @GetMapping("/fund-online")
+  public ResponseEntity<?> findAllAmountAndBatch(HttpServletRequest request,
+      @RequestParam(name = "ids", required = false, defaultValue = "0") String ids) {
+    try {
+//      if (!authGuard.checkPermission(request, null, PermissionObjectCode.APPLICATION,
+//          PermissionObjectCode.UserServicePermissionCode.DEVELOPER)) {
+//        return new ResponseEntity<>(
+//            BaseMethodResponse.builder().status(false).message(Constants.FORBIDDEN)
+//                .errorCode(HttpStatus.FORBIDDEN.name().toLowerCase())
+//                .httpCode(HttpStatus.FORBIDDEN.value()).build()
+//            , HttpStatus.OK);
+//      }
+      Map<String, Long> result = reportService.getAllFundByUserIdIn(ids);
+      return new ResponseEntity<>(
+          GetMethodResponse.builder().status(true).data(result)
+              .message(Constants.SUCCESS_MSG).errorCode(HttpStatus.OK.name().toLowerCase())
+              .httpCode(HttpStatus.OK.value()).build()
+          , HttpStatus.OK);
+    } catch (Exception e) {
+      logger.error(e.getMessage());
+      return new ResponseEntity<>(
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);

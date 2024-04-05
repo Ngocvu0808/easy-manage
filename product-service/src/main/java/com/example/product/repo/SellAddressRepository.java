@@ -9,5 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SellAddressRepository extends JpaRepository<SellAddressInfo, Integer> {
   List<SellAddressInfo> findAllByCusId(int cusId);
+  List<SellAddressInfo> findAllByBatch(String batch);
   Page<SellAddressInfo> findAll(Specification<SellAddressInfo> specification, Pageable pageable);
 }

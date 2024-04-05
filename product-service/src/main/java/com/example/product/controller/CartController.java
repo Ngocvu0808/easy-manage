@@ -56,7 +56,7 @@ public class CartController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);
@@ -84,7 +84,7 @@ public class CartController {
     } catch (Exception e) {
       logger.error(e.getMessage());
       return new ResponseEntity<>(
-          BaseMethodResponse.builder().status(false).message(Constants.INTERNAL_SERVER_ERROR)
+          BaseMethodResponse.builder().status(false).message(e.getMessage())
               .errorCode(HttpStatus.INTERNAL_SERVER_ERROR.name().toLowerCase())
               .httpCode(HttpStatus.INTERNAL_SERVER_ERROR.value()).build()
           , HttpStatus.OK);

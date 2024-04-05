@@ -8,6 +8,7 @@ import com.example.product.utils.EncodeUtils;
 import com.example.product.utils.JsonUtils;
 import com.example.product.utils.KeyConstants;
 import com.example.product.utils.KeyConstants.Headers;
+import com.example.product.utils.KeyConstants.JSONKey;
 import com.example.product.utils.KeyConstants.RedisKey;
 import com.example.product.utils.RequestUtils;
 import com.example.product.utils.ServiceInfo;
@@ -110,6 +111,38 @@ public class AuthGuardServiceImpl implements AuthGuardService {
         }
       }
     }
+  }
+
+  @Override
+  public String getUsernameFromToken(HttpServletRequest request) throws UnAuthorizedException {
+    // basic token base flow
+    String token = request.getHeader(Headers.TOKEN);
+    if (token == null || token.isBlank()) {
+      throw new UnAuthorizedException("token is null or empty",
+          ServiceInfo.getId() + AuthServiceMessageCode.TOKEN_NULL);
+    }
+    String pattern = "*:" + token;
+    if (!redisService.hasKeyPattern(pattern)) {
+      throw new UnAuthorizedException("token not found",
+          ServiceInfo.getId() + AuthServiceMessageCode.TOKEN_NOT_FOUND);
+    }
+    Set<Object> keys = redisService.keys(pattern);
+    Iterator<?> iter = keys.iterator();
+    Object firstKey = iter.next();
+    String keyCheck = firstKey.toString().replaceAll("\\[|\\]","");
+    String jwtValue = redisService.getValue(keyCheck).toString();
+    if (jwtValue == null || jwtValue.isBlank()) {
+      throw new UnAuthorizedException("jwt is null or empty",
+          ServiceInfo.getId() + AuthServiceMessageCode.JWT_NOT_FOUND);
+    }
+    String jwtBody = EncodeUtils.decodeJWT(jwtValue);
+    if (jwtBody != null) {
+      JSONObject jsonObject = new JSONObject(jwtBody);
+      if (jsonObject.has(JSONKey.PREFERRED_USERNAME) && !jsonObject.isNull(JSONKey.PREFERRED_USERNAME)) {
+        return jsonObject.getString(JSONKey.PREFERRED_USERNAME);
+      }
+    }
+    return null;
   }
 
   public Boolean checkPermission(HttpServletRequest request, Integer objectId, String objectCode,
